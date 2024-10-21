@@ -6,26 +6,22 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
-import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(callSuper = false) // equals/hashCode 메서드 생성(java.lang.Object 메서드 호출하지 않음)
 @Entity
 @Table(name = "users")
-@EntityListeners(AuditingEntityListener.class)
-public class User {
+public class User extends Timestamped {
     // PK id
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     // 유저명
-    @NotBlank(message = "이름은 필수 입력 값입니다.")
+    @NotBlank(message = "사용자명은 필수 입력 값입니다.")
     private String username;
     // 이메일(계정명)
     @Email
@@ -36,11 +32,12 @@ public class User {
     @NotBlank(message = "비밀번호는 필수 입력 값입니다.")
     @Pattern(regexp = "^(?=.*[a-zA-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$", message = "비밀번호는 대소문자 포함 영문, 숫자, 특수문자를 최소 1글자씩 포함해야 하며, 최소 8자 이상이어야 합니다.") // 정규 표현식 이용
     private String password;
-    // 생성일
-    @CreatedDate
-    @Column(updatable = false) // 한번 생성되면 업데이트 x
-    private LocalDateTime createdAt;
-    // 수정일
-    @LastModifiedDate
-    private LocalDateTime updatedAt;
+    // 비밀번호 변경
+    public void changePassword(String encodedPassword) {
+        this.password = encodedPassword;
+    }
+    // 계정 삭제 시 이메일 저장(Soft Delete)
+    public void markEmailAsDeleted() {
+        this.email = this.email + "_삭제됨_" + this.id;
+    }
 }
