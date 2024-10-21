@@ -1,6 +1,7 @@
 package com.example.paradise.user.controller;
 
 import com.example.paradise.user.dto.UserLoginRequest;
+import com.example.paradise.user.dto.UserPasswordUpdateRequest;
 import com.example.paradise.user.dto.UserRegisterRequest;
 import com.example.paradise.user.entity.User;
 import com.example.paradise.user.service.UserService;
@@ -12,6 +13,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/users")
@@ -40,9 +42,15 @@ public class UserController {
     // 특정 회원 조회
     @GetMapping("/{id}")
     public ResponseEntity<User> getUserById(@PathVariable long id) {
-        User user = userService.getUserById(id);
-        return ResponseEntity.ok(user);
+        Optional<User> user = userService.getUserById(id);
+        return user.map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(null));
     }
     // 비밀번호 변경
+    @PutMapping("/{id}")
+    public  ResponseEntity<User> updatePassword(@PathVariable Long id, @RequestBody @Valid UserPasswordUpdateRequest request) {
+        User updatedUser = userService.updatePassword(id, request.getNewPassword());
+        return ResponseEntity.ok(updatedUser);
+    }
     // 회원 탈퇴
 }

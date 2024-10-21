@@ -5,15 +5,14 @@ import com.example.paradise.user.dto.UserRegisterRequest;
 import com.example.paradise.user.entity.User;
 import com.example.paradise.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
-    @Autowired
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     // 회원 가입
@@ -44,11 +43,16 @@ public class UserService {
         return userRepository.findAll();
     }
     // 특정 회원 조회
-    public User getUserById(Long id) {
-        return userRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+    public Optional<User> getUserById(Long id) {
+        return userRepository.findById(id);
     }
     // 비밀번호 변경
+    public User updatePassword(Long id, String newPassword) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+        user.setPassword(passwordEncoder.encode(newPassword));
+        return userRepository.save(user);
+    }
     // 회원 탈퇴
 
 }
