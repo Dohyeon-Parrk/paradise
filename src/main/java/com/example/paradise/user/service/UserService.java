@@ -1,11 +1,14 @@
 package com.example.paradise.user.service;
 
 import com.example.paradise.user.config.PasswordEncoder;
+import com.example.paradise.user.dto.UserRegisterRequest;
 import com.example.paradise.user.entity.User;
 import com.example.paradise.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -14,11 +17,17 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     // 회원 가입
-    public User registerUser(User user) {
-        if (userRepository.findByEmail(user.getEmail()).isPresent()) {
+    public User registerUser(UserRegisterRequest request) {
+        if (userRepository.findByEmail(request.getEmail()).isPresent()) {
             throw new IllegalArgumentException("이미 사용 중인 이메일 입니다.");
         }
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        if (!request.getPassword().equals(request.getConfirmPassword())) {
+            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+        }
+        User user = new User();
+        user.setEmail(request.getEmail());
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        user.setUsername(request.getUsername());
         return userRepository.save(user);
     }
     // 로그인
@@ -31,7 +40,14 @@ public class UserService {
         return user;
     }
     // 모든 회원 조회
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
+    }
     // 특정 회원 조회
+    public User getUserById(Long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+    }
     // 비밀번호 변경
     // 회원 탈퇴
 
