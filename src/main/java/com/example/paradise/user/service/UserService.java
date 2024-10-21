@@ -17,15 +17,15 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     // 회원 가입
     public User registerUser(UserRegisterRequest request) {
-        if (userRepository.findByEmail(request.getEmail()).isPresent()) {
-            throw new IllegalArgumentException("이미 사용 중인 이메일 입니다.");
+        if (userRepository.existsByEmailAndEmailNotContaining(request.getEmail(), "_삭제됨_")) {
+            throw new IllegalArgumentException("이미 사용 중인 이메일입니다.");
         }
         if (!request.getPassword().equals(request.getConfirmPassword())) {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
         User user = new User();
         user.setEmail(request.getEmail());
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        user.changePassword(passwordEncoder.encode(request.getPassword())); // set이 아닌 비밀번호 전용 메서드 추가(보안 강화!)
         user.setUsername(request.getUsername());
         return userRepository.save(user);
     }
@@ -50,9 +50,17 @@ public class UserService {
     public User updatePassword(Long id, String newPassword) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
-        user.setPassword(passwordEncoder.encode(newPassword));
+        user.changePassword(passwordEncoder.encode(newPassword)); // set이 아닌 비밀번호 전용 메서드 추가(보안 강화!)
         return userRepository.save(user);
     }
     // 회원 탈퇴
-
+    public void deleteUser(Long id, String password) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+        if (!passwordEncoder.matches(password, user.getPassword())) {
+            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+        }
+        user.markEmailAsDeleted(); // 이번엔 set 안썼습니당~
+        userRepository.save(user); // delete가 아닌 save(Soft Delete)
+    }
 }
