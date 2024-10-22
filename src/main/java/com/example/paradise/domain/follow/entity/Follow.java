@@ -4,6 +4,7 @@ import com.example.paradise.common.Timestamped;
 import com.example.paradise.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.NoArgsConstructor;
 
 @Entity
@@ -23,4 +24,11 @@ public class Follow extends Timestamped {
 
     @Enumerated(EnumType.STRING)
     private FollowStatus status;
+
+    @Builder
+    public Follow(User requester, User receiver) {
+        this.requester = requester;
+        this.receiver = receiver;
+        this.status = FollowStatus.PENDING;
+    }
 }
