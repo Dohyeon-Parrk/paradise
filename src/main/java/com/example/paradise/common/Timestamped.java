@@ -1,4 +1,4 @@
-package com.example.paradise.user.entity;
+package com.example.paradise.common;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
@@ -12,11 +12,10 @@ import java.time.LocalDateTime;
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
 public abstract class Timestamped {
-    // 생성일
     @CreatedDate
     @Column(updatable = false)
     private LocalDateTime createdAt;
-    // 수정일
+
     @LastModifiedDate
     private LocalDateTime updatedAt;
 }
