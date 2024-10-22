@@ -33,7 +33,13 @@ public class UserService {
         user.setEmail(request.getEmail());
         user.changePassword(passwordEncoder.encode(request.getPassword())); // set이 아닌 비밀번호 전용 메서드 추가(보안 강화!)
         user.setUsername(request.getUsername());
-        return userRepository.save(user);
+
+        User saveUser = userRepository.save(user);
+
+        // 회원가입 후 자동으로 기본 프로필 생성
+        profileService.createProfile(saveUser);
+
+        return saveUser;
     }
     // 로그인
     public User loginUser(String email, String password) {
