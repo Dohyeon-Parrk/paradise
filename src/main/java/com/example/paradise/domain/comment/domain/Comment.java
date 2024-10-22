@@ -1,6 +1,6 @@
 package com.example.paradise.domain.comment.domain;
 
-import com.example.paradise.domain.user.entity.User;
+import com.example.paradise.domain.user.domain.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

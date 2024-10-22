@@ -1,4 +1,4 @@
-package com.example.paradise.domain.follow.entity;
+package com.example.paradise.domain.follow.domain;
 
 public enum FollowStatus {
     PENDING, ACCEPTED, DECLINED

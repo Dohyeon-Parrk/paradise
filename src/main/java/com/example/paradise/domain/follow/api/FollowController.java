@@ -1,6 +1,6 @@
 package com.example.paradise.domain.follow.api;
 
-import com.example.paradise.domain.follow.service.FollowService;
+import com.example.paradise.domain.follow.application.FollowService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

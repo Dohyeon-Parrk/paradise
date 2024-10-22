@@ -1,7 +1,7 @@
-package com.example.paradise.domain.follow.entity;
+package com.example.paradise.domain.follow.domain;
 
 import com.example.paradise.common.Timestamped;
-import com.example.paradise.domain.user.entity.User;
+import com.example.paradise.domain.user.domain.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;

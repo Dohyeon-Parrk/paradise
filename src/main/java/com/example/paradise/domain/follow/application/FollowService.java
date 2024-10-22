@@ -1,9 +1,9 @@
-package com.example.paradise.domain.follow.service;
+package com.example.paradise.domain.follow.application;
 
-import com.example.paradise.domain.follow.entity.Follow;
-import com.example.paradise.domain.follow.repository.FollowRepository;
-import com.example.paradise.domain.user.entity.User;
-import com.example.paradise.domain.user.repository.UserRepository;
+import com.example.paradise.domain.follow.domain.Follow;
+import com.example.paradise.domain.follow.domain.repository.FollowRepository;
+import com.example.paradise.domain.user.domain.User;
+import com.example.paradise.domain.user.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
