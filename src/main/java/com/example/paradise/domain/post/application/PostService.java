@@ -5,7 +5,7 @@ import com.example.paradise.domain.post.domain.PostRepository;
 import com.example.paradise.domain.post.dto.CreatePostRequestDto;
 import com.example.paradise.domain.post.dto.PostResponseDto;
 import com.example.paradise.domain.post.dto.UpdatePostRequestDto;
-import com.example.paradise.user.repository.UserRepository;
+import com.example.paradise.user.domain.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

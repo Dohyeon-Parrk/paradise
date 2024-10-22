@@ -1,9 +1,9 @@
-package com.example.paradise.user.service;
+package com.example.paradise.user.application;
 
 import com.example.paradise.user.config.PasswordEncoder;
 import com.example.paradise.user.dto.UserRegisterRequest;
-import com.example.paradise.user.entity.User;
-import com.example.paradise.user.repository.UserRepository;
+import com.example.paradise.user.domain.User;
+import com.example.paradise.user.domain.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
