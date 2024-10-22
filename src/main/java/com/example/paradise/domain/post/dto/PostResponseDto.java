@@ -12,7 +12,7 @@ public class PostResponseDto {
     private Long postId;
     private String username;
     private String content;
-    private  LocalDateTime createdAt;
+    private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
     public PostResponseDto(Post post) {
