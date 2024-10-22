@@ -5,8 +5,8 @@ import com.example.paradise.domain.profile.domain.Profile;
 import com.example.paradise.domain.profile.dto.ProfileResponseDto;
 import com.example.paradise.domain.profile.dto.image.ProfileImageRequestDto;
 import com.example.paradise.domain.profile.dto.profile.ProfileUpdateRequestDto;
-import com.example.paradise.domain.user.entity.User;
-import com.example.paradise.domain.user.repository.UserRepository;
+import com.example.paradise.user.entity.User;
+import com.example.paradise.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,6 +17,24 @@ public class ProfileService {
 
     private final ProfileRepository profileRepository;
     private final UserRepository userRepository;
+
+    // 회원 가입 후 프로필 자동 생성
+    public void createProfile(User userRegisterRequest) {
+        // user 정보 저장
+        User user = new User();
+        user.setUsername(userRegisterRequest.getUsername());
+        user.setEmail(userRegisterRequest.getEmail());
+        User saveUser = userRepository.save(user);
+
+        // 프로필 생성
+        Profile profile = new Profile();
+        profile.setUser(saveUser);
+        profile.setBio("자기소개를 입력해 주세요.");
+        profile.setProfileImage("/images/basic-profile.png");
+
+        profileRepository.save(profile);
+
+    }
 
     // 프로필 조회
     public ProfileResponseDto getProfile(Long userId) {
