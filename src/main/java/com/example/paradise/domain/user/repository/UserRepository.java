@@ -1,6 +1,6 @@
-package com.example.paradise.user.repository;
+package com.example.paradise.domain.user.repository;
 
-import com.example.paradise.user.entity.User;
+import com.example.paradise.domain.user.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

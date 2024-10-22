@@ -1,7 +1,7 @@
-package com.example.paradise.friend.api;
+package com.example.paradise.domain.follow.api;
 
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class FriendController {
+public class FollowController {
 }

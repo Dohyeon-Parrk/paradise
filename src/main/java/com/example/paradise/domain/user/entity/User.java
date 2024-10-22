@@ -1,12 +1,15 @@
-package com.example.paradise.user.entity;
+package com.example.paradise.domain.user.entity;
 
 import com.example.paradise.common.Timestamped;
+import com.example.paradise.domain.follow.entity.Follow;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -30,6 +33,9 @@ public class User extends Timestamped {
 
     @Pattern(regexp = "^(?=.*[a-zA-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$", message = "비밀번호는 대소문자 포함 영문, 숫자, 특수문자를 최소 1글자씩 포함해야 하며, 최소 8자 이상이어야 합니다.") // 정규 표현식 이용
     private String password;
+
+    @OneToMany(mappedBy = "fromUser")
+    private List<Follow> f
 
     public void changePassword(String encodedPassword) {
         this.password = encodedPassword;

@@ -1,4 +1,4 @@
-package com.example.paradise.user.config;
+package com.example.paradise.domain.user.config;
 
 import at.favre.lib.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Component;

@@ -1,11 +1,11 @@
-package com.example.paradise.user.controller;
+package com.example.paradise.domain.user.controller;
 
-import com.example.paradise.user.dto.UserDeleteRequest;
-import com.example.paradise.user.dto.UserLoginRequest;
-import com.example.paradise.user.dto.UserPasswordUpdateRequest;
-import com.example.paradise.user.dto.UserRegisterRequest;
-import com.example.paradise.user.entity.User;
-import com.example.paradise.user.service.UserService;
+import com.example.paradise.domain.user.dto.UserDeleteRequest;
+import com.example.paradise.domain.user.dto.UserLoginRequest;
+import com.example.paradise.domain.user.dto.UserPasswordUpdateRequest;
+import com.example.paradise.domain.user.dto.UserRegisterRequest;
+import com.example.paradise.domain.user.entity.User;
+import com.example.paradise.domain.user.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
