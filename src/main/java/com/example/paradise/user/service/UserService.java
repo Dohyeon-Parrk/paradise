@@ -1,5 +1,6 @@
 package com.example.paradise.user.service;
 
+import com.example.paradise.domain.profile.application.ProfileService;
 import com.example.paradise.user.config.PasswordEncoder;
 import com.example.paradise.user.dto.UserRegisterRequest;
 import com.example.paradise.user.entity.User;
@@ -15,6 +16,8 @@ import java.util.Optional;
 public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final ProfileService profileService;
+
     // 회원 가입
     public User registerUser(UserRegisterRequest request) {
         if (userRepository.existsByEmailAndStatus(request.getEmail(), "ACTIVE")) {
@@ -23,11 +26,18 @@ public class UserService {
         if (!request.getPassword().equals(request.getConfirmPassword())) {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
+
         User user = new User();
         user.setEmail(request.getEmail());
         user.changePassword(passwordEncoder.encode(request.getPassword())); // set이 아닌 비밀번호 전용 메서드 추가(보안 강화!)
         user.setUsername(request.getUsername());
-        return userRepository.save(user);
+
+        User saveUser = userRepository.save(user);
+
+        // 회원가입 후 자동으로 기본 프로필 생성
+        profileService.createProfile(saveUser);
+
+        return saveUser;
     }
     // 로그인
     public User loginUser(String email, String password) {
