@@ -26,9 +26,7 @@ public class UserService {
         if (!request.getPassword().equals(request.getConfirmPassword())) {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
-        if (!request.getPassword().equals(request.getConfirmPassword())) {
-            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
-        }
+
         User user = new User();
         user.setEmail(request.getEmail());
         user.changePassword(passwordEncoder.encode(request.getPassword())); // set이 아닌 비밀번호 전용 메서드 추가(보안 강화!)
