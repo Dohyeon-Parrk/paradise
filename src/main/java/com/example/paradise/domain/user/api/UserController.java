@@ -1,11 +1,13 @@
-package com.example.paradise.domain.user.controller;
+package com.example.paradise.domain.user.api;
 
+import com.example.paradise.domain.user.application.UserService;
+import com.example.paradise.domain.user.domain.User;
 import com.example.paradise.domain.user.dto.UserDeleteRequest;
 import com.example.paradise.domain.user.dto.UserLoginRequest;
 import com.example.paradise.domain.user.dto.UserPasswordUpdateRequest;
 import com.example.paradise.domain.user.dto.UserRegisterRequest;
-import com.example.paradise.domain.user.entity.User;
-import com.example.paradise.domain.user.service.UserService;
+
+import com.example.paradise.domain.user.util.JwtTokenUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -15,22 +17,25 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
+
 @RestController
 @RequestMapping("/api/users")
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
-    // 회원가입
+    private final JwtTokenUtil jwtTokenUtil;
+
     @PostMapping("/register")
-    public ResponseEntity<User> registerUser(@Valid @RequestBody UserRegisterRequest request) {
-        User registeredUser = userService.registerUser(request);
-        return new ResponseEntity<>(registeredUser, HttpStatus.CREATED);
+    public ResponseEntity<String> registerUser(@Valid @RequestBody UserRegisterRequest request) {
+        userService.registerUser(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body("/login");
     }
-    // 로그인
+
     @PostMapping("/login")
     public ResponseEntity<String> loginUser(@RequestBody @Valid UserLoginRequest request) {
-        userService.loginUser(request.getEmail(), request.getPassword());
-        return ResponseEntity.ok("로그인 성공");
+        User user = userService.loginUser(request.getEmail(), request.getPassword());
+        String token = jwtTokenUtil.createToken(request.getEmail(), user.getRole());
+        return ResponseEntity.ok(JwtTokenUtil.BEARER_PREFIX + token);
     }
     // 모든 회원 조회
     @GetMapping("/")
