@@ -17,7 +17,7 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     // 회원 가입
     public User registerUser(UserRegisterRequest request) {
-        if (userRepository.existsByEmailAndEmailNotContaining(request.getEmail(), "_삭제됨_")) {
+        if (userRepository.existsByEmailAndStatus(request.getEmail(), "ACTIVE")) {
             throw new IllegalArgumentException("이미 사용 중인 이메일입니다.");
         }
         if (!request.getPassword().equals(request.getConfirmPassword())) {
@@ -47,10 +47,13 @@ public class UserService {
         return userRepository.findById(id);
     }
     // 비밀번호 변경
-    public User updatePassword(Long id, String newPassword) {
-        User user = userRepository.findById(id)
+    public User updatePassword(String email, String newPassword, String confirmPassword) {
+        User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
-        user.changePassword(passwordEncoder.encode(newPassword)); // set이 아닌 비밀번호 전용 메서드 추가(보안 강화!)
+        if (!newPassword.equals(confirmPassword)) {
+            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+        }
+        user.changePassword(passwordEncoder.encode(newPassword));
         return userRepository.save(user);
     }
     // 회원 탈퇴
@@ -60,7 +63,7 @@ public class UserService {
         if (!passwordEncoder.matches(password, user.getPassword())) {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
-        user.markEmailAsDeleted(); // 이번엔 set 안썼습니당~
-        userRepository.save(user); // delete가 아닌 save(Soft Delete)
+        user.deactiveAccount(); // 계정을 비활성화 상태로 변경
+        userRepository.save(user);
     }
 }
