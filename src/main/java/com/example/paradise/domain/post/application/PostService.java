@@ -5,6 +5,7 @@ import com.example.paradise.domain.post.domain.PostRepository;
 import com.example.paradise.domain.post.dto.CreatePostRequestDto;
 import com.example.paradise.domain.post.dto.PostResponseDto;
 import com.example.paradise.domain.post.dto.UpdatePostRequestDto;
+import com.example.paradise.user.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -17,15 +18,17 @@ import org.springframework.transaction.annotation.Transactional;
 public class PostService {
 
     private final PostRepository postRepository;
+    private final UserRepository userRepository;
 
-    static private Long userId = 1L;
-    static private String username = "홍길동";
 
     // 1. 게시글 등록
     public PostResponseDto createPost(CreatePostRequestDto requestDto) {
         // dto -> entity
-        Post post = new Post(userId,username, requestDto.getContent());
-        
+        Post post = new Post(
+                userRepository.findById(requestDto.getUserId()).orElseThrow(()->new EntityNotFoundException("일정이 존재하지 않습니다")),
+                requestDto.getContent()
+        );
+
         // 저장
         Post savedpost = postRepository.save(post);
         
@@ -58,6 +61,7 @@ public class PostService {
     }
 
     //4. 게시글 수정
+    @Transactional
     public void updatePost(Long postId, UpdatePostRequestDto requestDto) {
         // 유효한 게시글인지  확인
         Post post = checkById(postId);
@@ -66,7 +70,7 @@ public class PostService {
         post.updateContent(requestDto.getContent());
 
         // 저장
-        Post updatedPost = postRepository.save(post);
+        postRepository.save(post);
 
     }
 
@@ -77,11 +81,11 @@ public class PostService {
         Post post = checkById(postId);
 
         // 게시글 삭제
-        postRepository.deleteById(postId);
+        postRepository.delete(post);
     }
     
     // postId 게시글 확인 메소드
-    public Post checkById(Long postId){
+    private Post checkById(Long postId){
         return postRepository.findById(postId).orElseThrow(()-> new EntityNotFoundException("게시글이 존재하지 않습니다."));
     }
 
