@@ -47,8 +47,8 @@ public class UserController {
     }
     // 비밀번호 변경
     @PutMapping("/{id}")
-    public ResponseEntity<User> updatePassword(@PathVariable Long id, @RequestBody @Valid UserPasswordUpdateRequest request) {
-        User updatedUser = userService.updatePassword(id, request.getNewPassword());
+    public ResponseEntity<User> updatePassword(@RequestBody @Valid UserPasswordUpdateRequest request) {
+        User updatedUser = userService.updatePassword(request.getEmail(), request.getNewPassword(), request.getConfirmPassword());
         return ResponseEntity.ok(updatedUser);
     }
     // 회원 탈퇴
