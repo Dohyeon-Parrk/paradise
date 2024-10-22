@@ -2,13 +2,12 @@ package com.example.paradise.domain.profile.domain;
 
 import com.example.paradise.user.entity.User;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
 @Getter
-@Setter
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "profile")
 public class Profile {
@@ -34,4 +33,11 @@ public class Profile {
     @Column(name = "following")
     private Long following = 0L;    // 팔로잉 수
 
+    public void updateBio(String bio){
+        this.bio = bio;
+    }
+
+    public void updateProfileImage(String profileImage){
+        this.profileImage = profileImage;
+    }
 }

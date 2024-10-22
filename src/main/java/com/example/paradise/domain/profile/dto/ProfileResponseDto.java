@@ -13,7 +13,7 @@ public class ProfileResponseDto {
     private Long follower;
     private Long following;
 
-    public ProfileResponseDto(Profile profile) {
+    public ProfileResponseDto (Profile profile) {
         this.profileImage = profile.getProfileImage();
         this.bio = profile.getBio();
         this.follower = profile.getFollower();

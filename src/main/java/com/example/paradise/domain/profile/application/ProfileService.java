@@ -19,11 +19,15 @@ public class ProfileService {
     private final UserRepository userRepository;
 
     // 회원 가입 후 프로필 자동 생성
-    public void createProfile(User user){
-        Profile profile = new Profile();
-        profile.setUser(user);
-        profile.setBio("자기소개를 입력해주세요");
-        profile.setProfileImage("/images/basic-profile.png");
+    public void createProfile(User user) {
+        Profile profile = Profile.builder()
+                .user(user)
+                .bio("자기소개를 입력해주세요")
+                .profileImage("/images/basic-profile.png")
+                .follower(0L)
+                .following(0L)
+                .build();
+
         profileRepository.save(profile);
     }
 
@@ -31,11 +35,11 @@ public class ProfileService {
     public ProfileResponseDto getProfile(Long userId) {
         // 유저 찾기
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("해당 유저를 찾을 수 없습니다."));
+                .orElseThrow(() -> new IllegalArgumentException("해당 유저를 찾을 수 없습니다."));
 
         // 프로필 찾기
         Profile profile = profileRepository.findByUser(user)
-                .orElseThrow(() -> new RuntimeException("프로필을 찾을 수 없습니다."));
+                .orElseThrow(() -> new IllegalArgumentException("프로필을 찾을 수 없습니다."));
 
         return new ProfileResponseDto(profile);
     }
@@ -45,13 +49,13 @@ public class ProfileService {
     public ProfileResponseDto updateProfile(Long userId, ProfileUpdateRequestDto profileUpdateRequestDto) {
         // 유저 찾기
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("해당 유저를 찾을 수 없습니다."));
+                .orElseThrow(() -> new IllegalArgumentException("해당 유저를 찾을 수 없습니다."));
 
         // 프로필 찾기
         Profile profile = profileRepository.findByUser(user)
-                .orElseThrow(() -> new RuntimeException("프로필을 찾을 수 없습니다."));
+                .orElseThrow(() -> new IllegalArgumentException("프로필을 찾을 수 없습니다."));
 
-        profile.setBio(profileUpdateRequestDto.getBio());
+        profile.updateBio(profileUpdateRequestDto.getBio());
         profileRepository.save(profile);
 
         return new ProfileResponseDto(profile);
@@ -61,13 +65,13 @@ public class ProfileService {
     public ProfileResponseDto updateProfileImage(Long userId, ProfileImageRequestDto profileImageRequestDto) {
         // 유저 찾기
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("해당 유저를 찾을 수 없습니다."));
+                .orElseThrow(() -> new IllegalArgumentException("해당 유저를 찾을 수 없습니다."));
 
         // 프로필 찾기
         Profile profile = profileRepository.findByUser(user)
-                .orElseThrow(() -> new RuntimeException("프로필을 찾을 수 없습니다."));
+                .orElseThrow(() -> new IllegalArgumentException("프로필을 찾을 수 없습니다."));
 
-        profile.setProfileImage(profileImageRequestDto.getProfileImage());
+        profile.updateProfileImage(profileImageRequestDto.getProfileImage());
         profileRepository.save(profile);
 
         return new ProfileResponseDto(profile);
