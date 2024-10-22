@@ -46,7 +46,7 @@ public class UserController {
                 .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(null));
     }
     // 비밀번호 변경
-    @PutMapping("/{id}")
+    @PutMapping("/update")
     public ResponseEntity<User> updatePassword(@RequestBody @Valid UserPasswordUpdateRequest request) {
         User updatedUser = userService.updatePassword(request.getEmail(), request.getNewPassword(), request.getConfirmPassword());
         return ResponseEntity.ok(updatedUser);
