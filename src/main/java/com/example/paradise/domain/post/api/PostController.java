@@ -23,7 +23,8 @@ public class PostController {
     // 1. 게시글 작성
     @PostMapping("")
     public ResponseEntity<PostResponseDto> createPost(@RequestBody CreatePostRequestDto requestDto) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(postService.createPost(requestDto));
+        PostResponseDto response = postService.createPost(requestDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     // 2. 게시글 조회 - 전체
@@ -32,7 +33,8 @@ public class PostController {
         @RequestParam(defaultValue = "0") int page,
         @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page,size, Sort.by("updatedAt").descending());
-        return  ResponseEntity.ok(postService.getAllPosts(pageable));
+        Page<PostResponseDto> response = postService.getAllPosts(pageable);
+        return  ResponseEntity.ok(response);
     }
 
     // 3. 게시글 조회 - 단건
@@ -46,7 +48,7 @@ public class PostController {
     @PutMapping("/{postId}")
     public ResponseEntity<Void>updatePost(@PathVariable Long postId, @RequestBody UpdatePostRequestDto requestDto) {
         postService.updatePost(postId, requestDto);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        return ResponseEntity.ok().build();
     }
 
     // 4. 게시글 삭제
@@ -56,8 +58,4 @@ public class PostController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
-
 }
-
-
-
