@@ -1,5 +1,6 @@
 package com.example.paradise.user.entity;
 
+import com.example.paradise.common.Timestamped;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
