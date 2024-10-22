@@ -19,21 +19,12 @@ public class ProfileService {
     private final UserRepository userRepository;
 
     // 회원 가입 후 프로필 자동 생성
-    public void createProfile(User userRegisterRequest) {
-        // user 정보 저장
-        User user = new User();
-        user.setUsername(userRegisterRequest.getUsername());
-        user.setEmail(userRegisterRequest.getEmail());
-        User saveUser = userRepository.save(user);
-
-        // 프로필 생성
+    public void createProfile(User user){
         Profile profile = new Profile();
-        profile.setUser(saveUser);
-        profile.setBio("자기소개를 입력해 주세요.");
+        profile.setUser(user);
+        profile.setBio("자기소개를 입력해주세요");
         profile.setProfileImage("/images/basic-profile.png");
-
         profileRepository.save(profile);
-
     }
 
     // 프로필 조회
