@@ -5,9 +5,11 @@ import com.example.paradise.domain.user.domain.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
+@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Follow extends Timestamped {
     @Id
@@ -30,5 +32,13 @@ public class Follow extends Timestamped {
         this.requester = requester;
         this.receiver = receiver;
         this.status = FollowStatus.PENDING;
+    }
+
+    public void updateFollowStatus(FollowStatus status) {
+        this.status = status;
+    }
+
+    public boolean isFollowing() {
+        return this.status.equals(FollowStatus.ACCEPTED);
     }
 }

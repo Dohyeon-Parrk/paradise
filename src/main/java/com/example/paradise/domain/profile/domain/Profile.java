@@ -17,7 +17,7 @@ public class Profile {
     private Long id;
 
     // User 테이블과 1:1
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
