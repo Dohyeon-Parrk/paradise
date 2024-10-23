@@ -2,6 +2,7 @@ package com.example.paradise.domain.user.domain;
 
 import com.example.paradise.common.Timestamped;
 import com.example.paradise.domain.follow.domain.Follow;
+import com.example.paradise.domain.profile.domain.Profile;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -42,6 +43,9 @@ public class User extends Timestamped {
 
     @OneToMany(mappedBy = "receiver", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Follow> receivers = new ArrayList<>();
+
+    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
+    private Profile profile;
 
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
