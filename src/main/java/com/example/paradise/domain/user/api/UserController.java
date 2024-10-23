@@ -24,16 +24,21 @@ public class UserController {
     private final JwtTokenUtil jwtTokenUtil;
 
     @PostMapping("/register")
-    public ResponseEntity<String> registerUser(@Valid @RequestBody UserRegisterRequest request) {
-        userService.registerUser(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body("/login");
+    public ResponseEntity<String> registerUser(@RequestBody @Valid UserRegisterRequest request) {
+            userService.registerUser(request);
+            return ResponseEntity.status(HttpStatus.CREATED).body("/login");
     }
 
     @PostMapping("/login")
     public ResponseEntity<String> loginUser(@RequestBody @Valid UserLoginRequest request) {
-        User user = userService.loginUser(request.getEmail(), request.getPassword());
-        String token = jwtTokenUtil.createToken(request.getEmail(), user.getRole());
-        return ResponseEntity.ok(JwtTokenUtil.BEARER_PREFIX + token);
+        try {
+            User user = userService.loginUser(request.getEmail(), request.getPassword());
+            String token = jwtTokenUtil.createToken(request.getEmail(), user.getRole());
+
+            return ResponseEntity.ok(JwtTokenUtil.BEARER_PREFIX + token);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인 실패");
+        }
     }
     // 모든 회원 조회
     @GetMapping("/")
@@ -46,7 +51,7 @@ public class UserController {
     public ResponseEntity<User> getUserById(@PathVariable long id) {
         Optional<User> user = userService.getUserById(id);
         return user.map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(null));
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
     // 비밀번호 변경
     @PutMapping("/update")
