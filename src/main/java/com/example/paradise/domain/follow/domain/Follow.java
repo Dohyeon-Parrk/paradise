@@ -37,4 +37,8 @@ public class Follow extends Timestamped {
     public void updateFollowStatus(FollowStatus status) {
         this.status = status;
     }
+
+    public boolean isFollowing() {
+        return this.status.equals(FollowStatus.ACCEPTED);
+    }
 }

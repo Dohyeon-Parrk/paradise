@@ -1,6 +1,7 @@
 package com.example.paradise.domain.follow.api;
 
-import com.example.paradise.domain.follow.api.dto.FollowResponse;
+import com.example.paradise.domain.follow.api.dto.FollowInfoResponse;
+import com.example.paradise.domain.follow.api.dto.FollowListResponse;
 import com.example.paradise.domain.follow.application.FollowService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -34,10 +35,16 @@ public class FollowController {
 
     }
 
+    @GetMapping("/check/{receiverId}")
+    public ResponseEntity<Boolean> checkFollowing(@PathVariable Long receiverId) {  // 토큰
+        boolean response = followService.checkFollowing(receiverId, 1L);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
     // 서로 친구인 사람만 해당 팔로우, 팔로잉을 확인할 수 있도록 해도 ㄱㅊ(비공개 계정같은)
     @GetMapping("/followers/{userId}")
-    public ResponseEntity<List<FollowResponse>> retrieveAllFollowers(@PathVariable Long userId) {
-        List<FollowResponse> responses = followService.retrieveAllFollowers(userId);
+    public ResponseEntity<FollowListResponse> retrieveAllFollowers(@PathVariable Long userId) {
+        FollowListResponse responses = followService.retrieveAllFollowers(userId);
         return new ResponseEntity<>(responses, HttpStatus.OK);
     }
 }
