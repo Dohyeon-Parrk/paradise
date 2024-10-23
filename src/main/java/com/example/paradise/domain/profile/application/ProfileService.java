@@ -22,7 +22,6 @@ public class ProfileService {
 
     private final ProfileRepository profileRepository;
     private final UserRepository userRepository;
-    private final CommentRepository commentRepository;
 
     // 회원 가입 후 프로필 자동 생성
     public void createProfile(User user) {

@@ -3,15 +3,14 @@ package com.example.paradise.domain.comment.domain;
 import com.example.paradise.domain.post.domain.Post;
 import com.example.paradise.domain.user.domain.User;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Getter
-@Setter
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "comment")
 public class Comment {

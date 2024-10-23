@@ -1,15 +1,13 @@
 package com.example.paradise.domain.comment.api;
 
 import com.example.paradise.domain.comment.application.CommentService;
+import com.example.paradise.domain.comment.dto.CommentRequestDto;
 import com.example.paradise.domain.comment.dto.CommentResponseDto;
 import com.example.paradise.domain.profile.application.ProfileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -28,4 +26,11 @@ public class CommentController {
         return new ResponseEntity<>(comments, HttpStatus.OK);
     }
 
+    // 댓글 생성
+    @PostMapping("/create")
+    public ResponseEntity<CommentResponseDto> createComment(@RequestBody CommentRequestDto commentRequestDto){
+        CommentResponseDto createdComment = commentService.createComment(commentRequestDto);
+
+        return new ResponseEntity<>(createdComment, HttpStatus.CREATED);
+    }
 }
