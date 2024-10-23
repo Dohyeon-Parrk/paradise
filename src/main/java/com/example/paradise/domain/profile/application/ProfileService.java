@@ -1,5 +1,7 @@
 package com.example.paradise.domain.profile.application;
 
+import com.example.paradise.domain.comment.dao.CommentRepository;
+import com.example.paradise.domain.comment.dto.CommentResponseDto;
 import com.example.paradise.domain.profile.dao.ProfileRepository;
 import com.example.paradise.domain.profile.domain.Profile;
 import com.example.paradise.domain.profile.dto.ProfileResponseDto;
@@ -10,6 +12,9 @@ import com.example.paradise.domain.user.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor

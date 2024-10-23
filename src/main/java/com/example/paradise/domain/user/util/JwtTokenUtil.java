@@ -1,9 +1,7 @@
 package com.example.paradise.domain.user.util;
 
-import com.example.paradise.domain.user.domain.UserRoleEnum;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
-import io.jsonwebtoken.security.SignatureException;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -28,8 +26,8 @@ public class JwtTokenUtil {
     public static final String AUTHORIZATION_KEY = "auth";
     public static final String BEARER_PREFIX = "Bearer ";
 
-    @Value("${jwt.secret}")
-    private String secretKey;
+    //    @Value("${jwt.secret}")
+//    private String secretKey;
     private Key key;
     private final SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS512;
 
@@ -40,12 +38,11 @@ public class JwtTokenUtil {
 
     @PostConstruct
     public void init() {
-        byte[] bytes = Base64.getDecoder().decode(secretKey);
-        key = Keys.hmacShaKeyFor(bytes);
+//        byte[] bytes = Base64.getDecoder().decode(secretKey);
+        key = Keys.secretKeyFor(signatureAlgorithm);
     }
 
-
-    public String createToken(String email, UserRoleEnum role) {
+    public String createToken(String email, String role) {
         Date date = new Date();
 
         return BEARER_PREFIX +

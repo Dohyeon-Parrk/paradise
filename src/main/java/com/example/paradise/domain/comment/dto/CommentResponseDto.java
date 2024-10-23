@@ -23,4 +23,14 @@ public class CommentResponseDto {
         this.content = content;
         this.createdAt = createdAt;
     }
+
+    public static CommentResponseDto from(Comment comment) {
+        return new CommentResponseDto(
+                comment.getId(),
+                comment.getUser().getId(),
+                comment.getUser().getUsername(),
+                comment.getContent(),
+                comment.getCreatedAt()
+        );
+    }
 }

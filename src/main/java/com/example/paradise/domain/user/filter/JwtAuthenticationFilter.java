@@ -1,7 +1,6 @@
 package com.example.paradise.domain.user.filter;
 
 import com.example.paradise.domain.user.domain.UserDetailsImpl;
-import com.example.paradise.domain.user.domain.UserRoleEnum;
 import com.example.paradise.domain.user.dto.UserLoginRequest;
 import com.example.paradise.domain.user.util.JwtTokenUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -50,7 +49,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
         log.info("로그인 성공 및 JWT 생성");
         String email = ((UserDetailsImpl) authResult.getPrincipal()).getUsername();
-        UserRoleEnum role = ((UserDetailsImpl) authResult.getPrincipal()).getUser().getRole();
+        String role = ((UserDetailsImpl) authResult.getPrincipal()).getUser().getRoleAsString();
 
         String token = jwtTokenUtil.createToken(email, role);
         jwtTokenUtil.addJwtToCookie(token, response);
