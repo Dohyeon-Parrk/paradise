@@ -21,4 +21,7 @@ public class UserRegisterRequest {
     // 비밀번호 확인
     @NotBlank
     private String confirmPassword;
+
+    private boolean admin = false;
+    private String adminToken = "";
 }

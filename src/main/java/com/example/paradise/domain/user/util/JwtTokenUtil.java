@@ -1,9 +1,7 @@
 package com.example.paradise.domain.user.util;
 
-import com.example.paradise.domain.user.domain.UserRoleEnum;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
-import io.jsonwebtoken.security.SignatureException;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -45,7 +43,7 @@ public class JwtTokenUtil {
     }
 
 
-    public String createToken(String email, UserRoleEnum role) {
+    public String createToken(String email, String role) {
         Date date = new Date();
 
         return BEARER_PREFIX +
