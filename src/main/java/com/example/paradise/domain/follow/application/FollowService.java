@@ -41,10 +41,10 @@ public class FollowService {
 
     @Transactional  // 팔로우 요청 거절 또는 언팔로우
     public void unfollow(Long requesterId, Long userId) {
-        User requester = userRepository.findById(requesterId)
+        userRepository.findById(requesterId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 유저가 존재하지 않습니다." + requesterId));
 
-        User user = userRepository.findById(userId)
+        userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 유저가 존재하지 않습니다." + userId));
 
         Follow follow = followRepository.findByRequesterIdAndReceiverId(requesterId, userId)
@@ -68,7 +68,7 @@ public class FollowService {
     }
 
     public FollowListResponse retrieveAllFollowers(Long userId) {
-        User user = userRepository.findById(userId)
+        userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 유저가 존재하지 않습니다." + userId));
         List<Follow> follows = followRepository.findAllByRequesterIdAndStatus(userId, FollowStatus.ACCEPTED);
         List<FollowInfoResponse> followInfoResponses = follows.stream()
@@ -78,7 +78,7 @@ public class FollowService {
     }
 
     public List<PostResponseDto> retrieveAllFollowingPosts(Long userId) {
-        User checkUser = userRepository.findById(userId)
+        userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 유저가 존재하지 않습니다." + userId));
         List<Follow> follows = followRepository.findAllByRequesterIdAndStatus(userId, FollowStatus.ACCEPTED);
         // follow -> user가 팔로우하고 있는 사람들(receiver) -> posts들 가져오기 -> 나열은 생성일 순.
@@ -92,7 +92,7 @@ public class FollowService {
                 .flatMap(user -> user.getPosts().stream())
                 .sorted(Comparator.comparing(Post::getCreatedAt).reversed())
                 .toList();
-
+// n+1 쿼리 문제
         return followedPosts.stream()
                 .map(PostResponseDto::new)
                 .toList();
