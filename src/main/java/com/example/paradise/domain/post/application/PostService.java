@@ -5,6 +5,7 @@ import com.example.paradise.domain.post.domain.PostRepository;
 import com.example.paradise.domain.post.dto.CreatePostRequestDto;
 import com.example.paradise.domain.post.dto.PostResponseDto;
 import com.example.paradise.domain.post.dto.UpdatePostRequestDto;
+import com.example.paradise.domain.user.domain.User;
 import com.example.paradise.domain.user.domain.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -22,16 +23,13 @@ public class PostService {
 
 
     // 1. 게시글 등록
-    public PostResponseDto createPost(CreatePostRequestDto requestDto) {
+    public PostResponseDto createPost(CreatePostRequestDto requestDto, User user) {
         // dto -> entity
-        Post post = new Post(
-                userRepository.findById(requestDto.getUserId()).orElseThrow(()->new EntityNotFoundException("일정이 존재하지 않습니다")),
-                requestDto.getContent()
-        );
+        Post post = new Post(user, requestDto.getContent());
 
         // 저장
         Post savedpost = postRepository.save(post);
-        
+
         // dto 변환
         PostResponseDto postResponseDto = new PostResponseDto(savedpost);
         return postResponseDto;
@@ -39,7 +37,7 @@ public class PostService {
 
 
     // 2. 게시글 조회 - 전체
-    public Page<PostResponseDto> getAllPosts(Pageable pageable) {
+    public Page<PostResponseDto> getAllPosts(Pageable pageable, User user) {
         // 게시글 페이징 처리
         Page<Post> postPage = postRepository.findAll(pageable);
         // entity -> responsedto
@@ -47,7 +45,7 @@ public class PostService {
     }
 
     // 3. 게시글 조회 - 단건
-    public PostResponseDto getPostById(Long postId) {
+    public PostResponseDto getPostById(Long postId, User user) {
         // 유효한 게시글인지  확인
         Post post = checkById(postId);
 
@@ -62,9 +60,15 @@ public class PostService {
 
     //4. 게시글 수정
     @Transactional
-    public void updatePost(Long postId, UpdatePostRequestDto requestDto) {
+    public void updatePost(Long postId, UpdatePostRequestDto requestDto, User user) {
         // 유효한 게시글인지  확인
         Post post = checkById(postId);
+
+        // 게시글 작성자 확인
+        if (!post.getAuthor().equals(user)) {
+            throw new IllegalArgumentException("이 게시글을 수정할 수 없습니다."); // 사용자 권한 오류 처리
+        }
+
 
         // 게시글 내용 업데이트
         post.updateContent(requestDto.getContent());
