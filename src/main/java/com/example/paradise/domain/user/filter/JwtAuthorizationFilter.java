@@ -1,7 +1,7 @@
-package com.example.paradise.user.filter;
+package com.example.paradise.domain.user.filter;
 
-import com.example.paradise.user.application.UserDetailsServiceImpl;
-import com.example.paradise.user.util.JwtTokenUtil;
+import com.example.paradise.domain.user.application.UserDetailsServiceImpl;
+import com.example.paradise.domain.user.util.JwtTokenUtil;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

@@ -1,8 +1,8 @@
-package com.example.paradise.user.application;
+package com.example.paradise.domain.user.application;
 
-import com.example.paradise.user.domain.User;
-import com.example.paradise.user.domain.UserDetailsImpl;
-import com.example.paradise.user.domain.UserRepository;
+import com.example.paradise.domain.user.domain.User;
+import com.example.paradise.domain.user.domain.UserDetailsImpl;
+import com.example.paradise.domain.user.domain.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

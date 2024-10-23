@@ -1,9 +1,9 @@
-package com.example.paradise.user.filter;
+package com.example.paradise.domain.user.filter;
 
-import com.example.paradise.user.domain.UserDetailsImpl;
-import com.example.paradise.user.domain.UserRoleEnum;
-import com.example.paradise.user.dto.UserLoginRequest;
-import com.example.paradise.user.util.JwtTokenUtil;
+import com.example.paradise.domain.user.domain.UserDetailsImpl;
+import com.example.paradise.domain.user.domain.UserRoleEnum;
+import com.example.paradise.domain.user.dto.UserLoginRequest;
+import com.example.paradise.domain.user.util.JwtTokenUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

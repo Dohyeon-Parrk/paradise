@@ -1,4 +1,4 @@
-package com.example.paradise.user.domain;
+package com.example.paradise.domain.user.domain;
 
 public enum UserRoleEnum {
     USER(Authority.USER),

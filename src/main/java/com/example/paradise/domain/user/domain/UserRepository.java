@@ -1,4 +1,4 @@
-package com.example.paradise.user.domain;
+package com.example.paradise.domain.user.domain;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

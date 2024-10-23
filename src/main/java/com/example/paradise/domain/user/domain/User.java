@@ -1,8 +1,7 @@
-package com.example.paradise.user.domain;
+package com.example.paradise.domain.user.domain;
 
 import com.example.paradise.common.Timestamped;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

@@ -1,6 +1,6 @@
-package com.example.paradise.user.util;
+package com.example.paradise.domain.user.util;
 
-import com.example.paradise.user.domain.UserRoleEnum;
+import com.example.paradise.domain.user.domain.UserRoleEnum;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;

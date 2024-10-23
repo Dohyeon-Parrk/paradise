@@ -1,6 +1,6 @@
 package com.example.paradise.domain.profile.domain;
 
-import com.example.paradise.user.entity.User;
+import com.example.paradise.domain.user.domain.User;
 import jakarta.persistence.*;
 import lombok.*;
 

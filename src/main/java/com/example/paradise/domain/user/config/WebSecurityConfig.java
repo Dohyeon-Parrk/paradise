@@ -1,9 +1,9 @@
-package com.example.paradise.user.config;
+package com.example.paradise.domain.user.config;
 
-import com.example.paradise.user.application.UserDetailsServiceImpl;
-import com.example.paradise.user.filter.JwtAuthenticationFilter;
-import com.example.paradise.user.filter.JwtAuthorizationFilter;
-import com.example.paradise.user.util.JwtTokenUtil;
+import com.example.paradise.domain.user.application.UserDetailsServiceImpl;
+import com.example.paradise.domain.user.filter.JwtAuthenticationFilter;
+import com.example.paradise.domain.user.filter.JwtAuthorizationFilter;
+import com.example.paradise.domain.user.util.JwtTokenUtil;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
