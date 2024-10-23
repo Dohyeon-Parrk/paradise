@@ -1,12 +1,16 @@
 package com.example.paradise.domain.profile.api;
 
+import com.example.paradise.domain.comment.dto.CommentResponseDto;
 import com.example.paradise.domain.profile.application.ProfileService;
 import com.example.paradise.domain.profile.dto.ProfileResponseDto;
 import com.example.paradise.domain.profile.dto.image.ProfileImageRequestDto;
 import com.example.paradise.domain.profile.dto.profile.ProfileUpdateRequestDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -41,7 +45,4 @@ public class ProfileController {
 
         return ResponseEntity.ok(updatedProfile);
     }
-
-    // 프로필 이미지 삭제
-
 }
