@@ -33,6 +33,13 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain filterChain) throws ServletException, IOException {
 
+        // 특정 URL 패턴 검사: /api/users/** 경로에 대해서는 필터링을 건너뜁니다.
+        String path = req.getRequestURI();
+        if(path.startsWith("/api/users/")){
+            filterChain.doFilter(req, res);
+            return;
+        }
+
         String tokenValue = jwtTokenUtil.getTokenFromRequest(req);
 
         if (StringUtils.hasText(tokenValue)) {
