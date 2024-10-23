@@ -21,7 +21,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
-    private final JwtTokenUtil jwtTokenUtil;
 
     @PostMapping("/register")
     public ResponseEntity<String> registerUser(@RequestBody @Valid UserRegisterRequest request) {
@@ -32,34 +31,33 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<String> loginUser(@RequestBody @Valid UserLoginRequest request) {
         try {
-            User user = userService.loginUser(request.getEmail(), request.getPassword());
-            String token = jwtTokenUtil.createToken(request.getEmail(), user.getRole());
+            String token = userService.loginUser(request.getEmail(), request.getPassword());
 
             return ResponseEntity.ok(JwtTokenUtil.BEARER_PREFIX + token);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인 실패");
         }
     }
-    // 모든 회원 조회
+
     @GetMapping("/")
     public ResponseEntity<List<User>> getAllUsers() {
         List<User> users = userService.getAllUsers();
         return ResponseEntity.ok(users);
     }
-    // 특정 회원 조회
+
     @GetMapping("/{id}")
     public ResponseEntity<User> getUserById(@PathVariable long id) {
         Optional<User> user = userService.getUserById(id);
         return user.map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
-    // 비밀번호 변경
+
     @PutMapping("/update")
     public ResponseEntity<User> updatePassword(@RequestBody @Valid UserPasswordUpdateRequest request) {
         User updatedUser = userService.updatePassword(request.getEmail(), request.getNewPassword(), request.getConfirmPassword());
         return ResponseEntity.ok(updatedUser);
     }
-    // 회원 탈퇴
+
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteUser(@PathVariable long id, @RequestBody @Valid UserDeleteRequest request) {
         userService.deleteUser(id, request.getPassword());

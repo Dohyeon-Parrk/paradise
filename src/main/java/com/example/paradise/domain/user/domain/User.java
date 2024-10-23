@@ -66,4 +66,8 @@ public class User extends Timestamped {
         this.password = password;
         this.role = role;
     }
+
+    public String getRoleAsString() {
+        return this.role.getAuthority();
+    }
 }

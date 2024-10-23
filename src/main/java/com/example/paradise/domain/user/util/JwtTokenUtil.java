@@ -44,7 +44,7 @@ public class JwtTokenUtil {
     }
 
 
-    public String createToken(String email, UserRoleEnum role) {
+    public String createToken(String email, String role) {
         Date date = new Date();
 
         return BEARER_PREFIX +
