@@ -1,8 +1,8 @@
 package com.example.paradise.domain.follow.api;
 
-import com.example.paradise.domain.follow.api.dto.FollowInfoResponse;
 import com.example.paradise.domain.follow.api.dto.FollowListResponse;
 import com.example.paradise.domain.follow.application.FollowService;
+import com.example.paradise.domain.post.dto.PostResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -46,5 +46,11 @@ public class FollowController {
     public ResponseEntity<FollowListResponse> retrieveAllFollowers(@PathVariable Long userId) {
         FollowListResponse responses = followService.retrieveAllFollowers(userId);
         return new ResponseEntity<>(responses, HttpStatus.OK);
+    }
+
+    @GetMapping("/posts")
+    public ResponseEntity<List<PostResponseDto>> retrieveAllFollowingPosts() {
+        List<PostResponseDto> followingPosts = followService.retrieveAllFollowingPosts(1L);
+        return new ResponseEntity<>(followingPosts, HttpStatus.OK);
     }
 }

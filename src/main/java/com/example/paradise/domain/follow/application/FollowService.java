@@ -5,12 +5,15 @@ import com.example.paradise.domain.follow.api.dto.FollowListResponse;
 import com.example.paradise.domain.follow.domain.Follow;
 import com.example.paradise.domain.follow.domain.FollowStatus;
 import com.example.paradise.domain.follow.domain.repository.FollowRepository;
+import com.example.paradise.domain.post.domain.Post;
+import com.example.paradise.domain.post.dto.PostResponseDto;
 import com.example.paradise.domain.user.domain.User;
 import com.example.paradise.domain.user.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -67,10 +70,31 @@ public class FollowService {
     public FollowListResponse retrieveAllFollowers(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 유저가 존재하지 않습니다." + userId));
-        List<Follow> followers = followRepository.findAllByRequesterIdAndStatus(userId, FollowStatus.ACCEPTED);
-        List<FollowInfoResponse> followInfoResponses = followers.stream()
+        List<Follow> follows = followRepository.findAllByRequesterIdAndStatus(userId, FollowStatus.ACCEPTED);
+        List<FollowInfoResponse> followInfoResponses = follows.stream()
                 .map(FollowInfoResponse::from)
                 .toList();
         return FollowListResponse.from(followInfoResponses);
+    }
+
+    public List<PostResponseDto> retrieveAllFollowingPosts(Long userId) {
+        User checkUser = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 유저가 존재하지 않습니다." + userId));
+        List<Follow> follows = followRepository.findAllByRequesterIdAndStatus(userId, FollowStatus.ACCEPTED);
+        // follow -> user가 팔로우하고 있는 사람들(receiver) -> posts들 가져오기 -> 나열은 생성일 순.
+        // 그리고 페이지네이션은 고민.
+
+        List<User> followedUsers = follows.stream()
+                .map(Follow::getReceiver)
+                .toList();
+
+        List<Post> followedPosts = followedUsers.stream()
+                .flatMap(user -> user.getPosts().stream())
+                .sorted(Comparator.comparing(Post::getCreatedAt).reversed())
+                .toList();
+
+        return followedPosts.stream()
+                .map(PostResponseDto::new)
+                .toList();
     }
 }
