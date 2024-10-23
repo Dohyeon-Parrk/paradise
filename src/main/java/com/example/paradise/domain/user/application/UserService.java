@@ -2,9 +2,9 @@ package com.example.paradise.domain.user.application;
 
 import com.example.paradise.domain.profile.application.ProfileService;
 import com.example.paradise.domain.user.config.PasswordEncoder;
+import com.example.paradise.domain.user.domain.repository.UserRepository;
 import com.example.paradise.domain.user.dto.UserRegisterRequest;
 import com.example.paradise.domain.user.domain.User;
-import com.example.paradise.domain.user.domain.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

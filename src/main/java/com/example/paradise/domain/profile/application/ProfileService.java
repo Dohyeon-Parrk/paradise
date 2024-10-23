@@ -6,7 +6,7 @@ import com.example.paradise.domain.profile.dto.ProfileResponseDto;
 import com.example.paradise.domain.profile.dto.image.ProfileImageRequestDto;
 import com.example.paradise.domain.profile.dto.profile.ProfileUpdateRequestDto;
 import com.example.paradise.domain.user.domain.User;
-import com.example.paradise.domain.user.domain.UserRepository;
+import com.example.paradise.domain.user.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
