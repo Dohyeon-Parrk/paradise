@@ -28,11 +28,9 @@ public class FollowService {
 
     @Transactional
     public void follow(Long receiverId, Long userId) {
-        User receiver = userRepository.findById(receiverId)
-                .orElseThrow(() -> new UserNotFoundException(receiverId));
+        User receiver = findUserById(receiverId);
 
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException(userId));
+        User user = findUserById(userId);
 
         Follow follow = Follow.builder()
                 .receiver(receiver)
@@ -44,11 +42,8 @@ public class FollowService {
 
     @Transactional  // 팔로우 요청 거절 또는 언팔로우
     public void unfollow(Long followerId, Long userId) {
-        userRepository.findById(followerId)
-                .orElseThrow(() -> new UserNotFoundException(followerId));
-
-        userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException(userId));
+        findUserById(followerId);
+        findUserById(userId);
 
         Follow follow = followRepository.findByRequesterIdAndReceiverId(userId, followerId)
                 .orElseThrow(() -> new IllegalArgumentException("팔로우를 서로 요청하지 않은 상태입니다."));
@@ -71,8 +66,7 @@ public class FollowService {
     }
 
     public FollowListResponse retrieveAllFollowers(Long userId) {
-        userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException(userId));
+        findUserById(userId);
         List<Follow> follows = followRepository.findAllByRequesterIdAndStatus(userId, FollowStatus.ACCEPTED);
         List<FollowInfoResponse> followInfoResponses = follows.stream()
                 .map(FollowInfoResponse::from)
@@ -81,8 +75,7 @@ public class FollowService {
     }
 
     public List<PostResponseDto> retrieveAllFollowingPosts(Long userId) {
-        userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException(userId));
+        findUserById(userId);
         List<Follow> follows = followRepository.findAllByRequesterIdAndStatus(userId, FollowStatus.ACCEPTED);
         // follow -> user가 팔로우하고 있는 사람들(receiver) -> posts들 가져오기 -> 나열은 생성일 순.
         // 그리고 페이지네이션은 고민.
@@ -100,5 +93,10 @@ public class FollowService {
         return followedPosts.stream()
                 .map(PostResponseDto::new)
                 .toList();
+    }
+
+    private User findUserById(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(userId));
     }
 }
