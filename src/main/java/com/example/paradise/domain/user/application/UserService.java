@@ -24,6 +24,7 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final ProfileService profileService;
     private final JwtTokenUtil jwtTokenUtil;
+    private final String ADMIN_TOKEN = "AAABnvxRVklrnYxKZ0aHgTBcXukeZygoC";
 
     public void registerUser(UserRegisterRequest request) {
         String email = request.getEmail();
