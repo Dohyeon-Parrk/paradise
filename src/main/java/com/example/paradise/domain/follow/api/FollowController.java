@@ -3,11 +3,14 @@ package com.example.paradise.domain.follow.api;
 import com.example.paradise.domain.follow.api.dto.FollowListResponse;
 import com.example.paradise.domain.follow.application.FollowService;
 import com.example.paradise.domain.post.dto.PostResponseDto;
+import com.example.paradise.domain.user.domain.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -15,29 +18,33 @@ import java.util.List;
 @RequestMapping("/api/follow")
 public class FollowController {
     private final FollowService followService;
-// 추후 user쪽 완성되면 쿠키에서 토큰 가져와서 사용자 인증!!
+
     @PostMapping("/{receiverId}")
-    public ResponseEntity<String> follow(@PathVariable Long receiverId){
-        followService.follow(receiverId, 1L);
+    public ResponseEntity<String> follow(@PathVariable Long receiverId,
+                                         @AuthenticationPrincipal UserDetailsImpl userDetails){
+        followService.follow(receiverId, userDetails.getUser().getId());
         return new ResponseEntity<>(HttpStatus.OK);
     }
-// 추후 user쪽 완성되면 쿠키에서 토큰 가져와서 사용자 인증!!
+
     @DeleteMapping("/{requesterId}")
-    public ResponseEntity<String> unFollow(@PathVariable Long requesterId) {
-        followService.unfollow(requesterId, 1L);
+    public ResponseEntity<String> unFollow(@PathVariable Long requesterId,
+                                           @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        followService.unfollow(requesterId, userDetails.getUser().getId());
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @PatchMapping("/{requesterId}")
-    public ResponseEntity<String> acceptedFollow(@PathVariable Long requesterId) {    // 토큰
-        followService.acceptedFollow(requesterId, 1L);
+    public ResponseEntity<String> acceptedFollow(@PathVariable Long requesterId,
+                                                 @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        followService.acceptedFollow(requesterId, userDetails.getUser().getId());
         return new ResponseEntity<>(HttpStatus.OK);
 
     }
 
     @GetMapping("/check/{receiverId}")
-    public ResponseEntity<Boolean> checkFollowing(@PathVariable Long receiverId) {  // 토큰
-        boolean response = followService.checkFollowing(receiverId, 1L);
+    public ResponseEntity<Boolean> checkFollowing(@PathVariable Long receiverId,
+                                                  @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        boolean response = followService.checkFollowing(receiverId, userDetails.getUser().getId());
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -49,8 +56,8 @@ public class FollowController {
     }
 
     @GetMapping("/posts")
-    public ResponseEntity<List<PostResponseDto>> retrieveAllFollowingPosts() {
-        List<PostResponseDto> followingPosts = followService.retrieveAllFollowingPosts(1L);
+    public ResponseEntity<List<PostResponseDto>> retrieveAllFollowingPosts(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        List<PostResponseDto> followingPosts = followService.retrieveAllFollowingPosts(userDetails.getUser().getId());
         return new ResponseEntity<>(followingPosts, HttpStatus.OK);
     }
 }

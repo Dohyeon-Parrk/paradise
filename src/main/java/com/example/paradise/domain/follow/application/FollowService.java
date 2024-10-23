@@ -40,14 +40,14 @@ public class FollowService {
     }
 
     @Transactional  // 팔로우 요청 거절 또는 언팔로우
-    public void unfollow(Long requesterId, Long userId) {
-        userRepository.findById(requesterId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 유저가 존재하지 않습니다." + requesterId));
+    public void unfollow(Long followerId, Long userId) {
+        userRepository.findById(followerId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 유저가 존재하지 않습니다." + followerId));
 
         userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 유저가 존재하지 않습니다." + userId));
 
-        Follow follow = followRepository.findByRequesterIdAndReceiverId(requesterId, userId)
+        Follow follow = followRepository.findByRequesterIdAndReceiverId(userId, followerId)
                 .orElseThrow(() -> new IllegalArgumentException("팔로우를 서로 요청하지 않은 상태입니다."));
 
         followRepository.delete(follow);
