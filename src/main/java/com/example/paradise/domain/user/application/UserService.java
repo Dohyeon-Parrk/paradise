@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
@@ -48,8 +49,8 @@ public class UserService {
 
         User user = new User(username, email, password, role);
         // 회원가입 후 자동으로 기본 프로필 생성
-        profileService.createProfile(user);
         userRepository.save(user);
+        profileService.createProfile(user);
     }
 
     public String loginUser(String email, String password) {
