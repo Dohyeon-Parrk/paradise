@@ -1,11 +1,12 @@
 package com.example.paradise.domain.user.application;
 
 import com.example.paradise.domain.profile.application.ProfileService;
-//import com.example.paradise.domain.user.config.PasswordEncoder;
+
 import com.example.paradise.domain.user.domain.User;
 import com.example.paradise.domain.user.domain.UserRoleEnum;
 import com.example.paradise.domain.user.domain.repository.UserRepository;
 import com.example.paradise.domain.user.dto.UserRegisterRequest;
+
 import com.example.paradise.domain.user.util.JwtTokenUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -16,15 +17,13 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final ProfileService profileService;
     private final JwtTokenUtil jwtTokenUtil;
-
-    private final String ADMIN_TOKEN = "AAABnvxRVklrnYxKZ0aHgTBcXukeZygoC";
-
 
     public void registerUser(UserRegisterRequest request) {
         String email = request.getEmail();
