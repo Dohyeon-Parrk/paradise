@@ -6,6 +6,7 @@ import com.example.paradise.domain.follow.domain.Follow;
 import com.example.paradise.domain.follow.domain.FollowStatus;
 import com.example.paradise.domain.follow.domain.repository.FollowRepository;
 import com.example.paradise.domain.post.domain.Post;
+import com.example.paradise.domain.post.domain.PostRepository;
 import com.example.paradise.domain.post.dto.PostResponseDto;
 import com.example.paradise.domain.user.domain.User;
 import com.example.paradise.domain.user.domain.repository.UserRepository;
@@ -23,6 +24,7 @@ import java.util.List;
 public class FollowService {
     private final FollowRepository followRepository;
     private final UserRepository userRepository;
+    private final PostRepository postRepository;
 
     @Transactional
     public void follow(Long receiverId, Long userId) {
@@ -89,11 +91,12 @@ public class FollowService {
                 .map(Follow::getReceiver)
                 .toList();
 
-        List<Post> followedPosts = followedUsers.stream()
-                .flatMap(user -> user.getPosts().stream())
-                .sorted(Comparator.comparing(Post::getCreatedAt).reversed())
+        List<Long> followedUserIds = followedUsers.stream()
+                .map(User::getId)
                 .toList();
-// n+1 쿼리 문제
+
+        List<Post> followedPosts = postRepository.findPostsByUsers(followedUserIds);
+
         return followedPosts.stream()
                 .map(PostResponseDto::new)
                 .toList();
