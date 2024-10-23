@@ -1,7 +1,10 @@
 package com.example.paradise.domain.user.domain;
 
 import com.example.paradise.common.Timestamped;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.example.paradise.domain.follow.domain.Follow;
+import com.example.paradise.domain.post.domain.Post;
+import com.example.paradise.domain.profile.domain.Profile;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -28,13 +31,14 @@ public class User extends Timestamped {
 
     private String username;
 
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
     private String email;
 
     @Column(nullable = false)
 
     private String status = "ACTIVE"; // 계정 상태 ex) ACTIVE, DELETED
 
+    @JsonIgnore // 비밀번호 외부 노출 방지
     private String password;
 
     @OneToMany(mappedBy = "requester", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -42,6 +46,12 @@ public class User extends Timestamped {
 
     @OneToMany(mappedBy = "receiver", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Follow> receivers = new ArrayList<>();
+
+    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Post> posts = new ArrayList<>();
+
+    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
+    private Profile profile;
 
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
@@ -64,5 +74,16 @@ public class User extends Timestamped {
 
     public void deactiveAccount() {
         this.status = "DELETED";
+    }
+
+    public User(String username, String email, String password, UserRoleEnum role) {
+        this.username = username;
+        this.email = email;
+        this.password = password;
+        this.role = role;
+    }
+
+    public String getRoleAsString() {
+        return this.role.getAuthority();
     }
 }

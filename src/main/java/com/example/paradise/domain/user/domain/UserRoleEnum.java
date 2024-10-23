@@ -11,7 +11,7 @@ public enum UserRoleEnum {
     }
 
     public String getAuthority() {
-        return this.authority;
+        return authority;
     }
 
     public static class Authority {
