@@ -1,13 +1,14 @@
 package com.example.paradise.domain.user.application;
 
 import com.example.paradise.domain.profile.application.ProfileService;
-import com.example.paradise.domain.user.config.PasswordEncoder;
+//import com.example.paradise.domain.user.config.PasswordEncoder;
+import com.example.paradise.domain.user.domain.User;
 import com.example.paradise.domain.user.domain.UserRoleEnum;
 import com.example.paradise.domain.user.domain.repository.UserRepository;
 import com.example.paradise.domain.user.dto.UserRegisterRequest;
-import com.example.paradise.domain.user.domain.User;
 import com.example.paradise.domain.user.util.JwtTokenUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -48,8 +49,8 @@ public class UserService {
 
         User user = new User(username, email, password, role);
         // 회원가입 후 자동으로 기본 프로필 생성
-        profileService.createProfile(user);
         userRepository.save(user);
+        profileService.createProfile(user);
     }
 
     public String loginUser(String email, String password) {

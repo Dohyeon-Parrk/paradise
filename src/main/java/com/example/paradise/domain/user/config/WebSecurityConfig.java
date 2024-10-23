@@ -13,6 +13,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -62,13 +63,14 @@ public class WebSecurityConfig {
                         .requestMatchers("/api/users/**").permitAll()
                         .anyRequest().authenticated());
 
-        http.formLogin((formLogin) ->
-                formLogin
-                        .loginPage("/api/users/login").permitAll());
-
-        http.addFilterBefore(jwtAuthenticationFilter(), JwtAuthenticationFilter.class);
-        http.addFilterBefore(jwtAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(jwtAuthorizationFilter(), JwtAuthenticationFilter.class);
+        http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
+    }
+
+    @Bean
+    public BCryptPasswordEncoder passowordEncoder(){
+        return new BCryptPasswordEncoder();
     }
 }
