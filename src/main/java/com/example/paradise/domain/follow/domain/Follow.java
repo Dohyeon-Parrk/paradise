@@ -33,4 +33,8 @@ public class Follow extends Timestamped {
         this.receiver = receiver;
         this.status = FollowStatus.PENDING;
     }
+
+    public void updateFollowStatus(FollowStatus status) {
+        this.status = status;
+    }
 }

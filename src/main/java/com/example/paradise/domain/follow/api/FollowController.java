@@ -27,6 +27,13 @@ public class FollowController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
+    @PatchMapping("/{requesterId}")
+    public ResponseEntity<String> acceptedFollow(@PathVariable Long requesterId) {    // 토큰
+        followService.acceptedFollow(requesterId, 1L);
+        return new ResponseEntity<>(HttpStatus.OK);
+
+    }
+
     // 서로 친구인 사람만 해당 팔로우, 팔로잉을 확인할 수 있도록 해도 ㄱㅊ(비공개 계정같은)
     @GetMapping("/followers/{userId}")
     public ResponseEntity<List<FollowResponse>> retrieveAllFollowers(@PathVariable Long userId) {
