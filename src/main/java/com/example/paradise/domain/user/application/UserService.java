@@ -4,7 +4,6 @@ import com.example.paradise.domain.profile.application.ProfileService;
 import com.example.paradise.domain.user.config.PasswordEncoder;
 import com.example.paradise.domain.user.domain.UserRoleEnum;
 import com.example.paradise.domain.user.domain.repository.UserRepository;
-import com.example.paradise.domain.user.dto.UserLoginRequest;
 import com.example.paradise.domain.user.dto.UserRegisterRequest;
 import com.example.paradise.domain.user.domain.User;
 import com.example.paradise.domain.user.util.JwtTokenUtil;
@@ -48,6 +47,8 @@ public class UserService {
         }
 
         User user = new User(username, email, password, role);
+        // 회원가입 후 자동으로 기본 프로필 생성
+        profileService.createProfile(user);
         userRepository.save(user);
     }
 
@@ -90,7 +91,7 @@ public class UserService {
         if (!passwordEncoder.matches(password, user.getPassword())) {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
-        user.deactiveAccount();
+        user.deactiveAccount(); // 계정을 비활성화 상태로 변경
         userRepository.save(user);
     }
 }

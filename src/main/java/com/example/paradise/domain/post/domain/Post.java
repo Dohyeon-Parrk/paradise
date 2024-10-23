@@ -1,6 +1,7 @@
 package com.example.paradise.domain.post.domain;
 
 import com.example.paradise.common.Timestamped;
+
 import com.example.paradise.domain.user.domain.User;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -30,7 +31,7 @@ public class Post extends Timestamped {
     //게시글 - 유저
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    private User user;
+    private User author;
 
     public Post(User user, String content) {
         this.username = user.getUsername();

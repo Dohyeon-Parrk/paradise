@@ -1,11 +1,11 @@
 package com.example.paradise.domain.user.api;
 
+import com.example.paradise.domain.user.application.UserService;
+import com.example.paradise.domain.user.domain.User;
 import com.example.paradise.domain.user.dto.UserDeleteRequest;
 import com.example.paradise.domain.user.dto.UserLoginRequest;
 import com.example.paradise.domain.user.dto.UserPasswordUpdateRequest;
 import com.example.paradise.domain.user.dto.UserRegisterRequest;
-import com.example.paradise.domain.user.domain.User;
-import com.example.paradise.domain.user.application.UserService;
 import com.example.paradise.domain.user.util.JwtTokenUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+
 
 @RestController
 @RequestMapping("/api/users")

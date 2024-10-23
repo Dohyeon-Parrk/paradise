@@ -1,7 +1,6 @@
 package com.example.paradise.domain.user.filter;
 
 import com.example.paradise.domain.user.domain.UserDetailsImpl;
-import com.example.paradise.domain.user.domain.UserRoleEnum;
 import com.example.paradise.domain.user.dto.UserLoginRequest;
 import com.example.paradise.domain.user.util.JwtTokenUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
