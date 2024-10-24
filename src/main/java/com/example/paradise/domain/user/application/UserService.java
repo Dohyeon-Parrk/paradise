@@ -16,6 +16,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -92,16 +93,18 @@ public class UserService {
 
     @Transactional
     public void deleteUser(UserDeleteRequest request) {
-        // 이메일로 사용자 조회
+
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
-        // 비밀번호 검증
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new IllegalArgumentException("Invalid password");
         }
 
-        // 사용자 삭제
-        userRepository.delete(user);
+        user.setUsername(null);
+        user.setPassword(null);
+        user.setStatus("DELETED");
+
+        userRepository.save(user);
     }
 }
