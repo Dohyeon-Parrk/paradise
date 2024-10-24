@@ -30,6 +30,9 @@ public class FollowService {
 
     @Transactional
     public void follow(Long receiverId, Long userId) {
+        if (receiverId.equals(userId)) {
+            throw new IllegalArgumentException("자신한테 팔로우 요청을 보낼 수 없습니다.");
+        }
         User receiver = findUserById(receiverId);
         User user = findUserById(userId);
         if (followRepository.existsByReceiverIdAndRequesterId(receiverId, userId)){
