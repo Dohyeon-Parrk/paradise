@@ -48,10 +48,15 @@ public class FollowController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    // 서로 친구인 사람만 해당 팔로우, 팔로잉을 확인할 수 있도록 해도 ㄱㅊ(비공개 계정같은)
     @GetMapping("/followers/{userId}")
     public ResponseEntity<FollowListResponse> retrieveAllFollowers(@PathVariable Long userId) {
         FollowListResponse responses = followService.retrieveAllFollowers(userId);
+        return new ResponseEntity<>(responses, HttpStatus.OK);
+    }
+
+    @GetMapping("/followings/{userId}")
+    public ResponseEntity<FollowListResponse> retrieveAllFollowings(@PathVariable Long userId) {
+        FollowListResponse responses = followService.retrieveAllFollowings(userId);
         return new ResponseEntity<>(responses, HttpStatus.OK);
     }
 

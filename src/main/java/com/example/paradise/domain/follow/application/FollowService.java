@@ -71,6 +71,15 @@ public class FollowService {
 
     public FollowListResponse retrieveAllFollowers(Long userId) {
         findUserById(userId);
+        List<Follow> follows = followRepository.findAllByReceiverIdAndStatus(userId, FollowStatus.ACCEPTED);
+        List<FollowInfoResponse> followInfoResponses = follows.stream()
+                .map(FollowInfoResponse::from)
+                .toList();
+        return FollowListResponse.from(followInfoResponses);
+    }
+
+    public FollowListResponse retrieveAllFollowings(Long userId) {
+        findUserById(userId);
         List<Follow> follows = followRepository.findAllByRequesterIdAndStatus(userId, FollowStatus.ACCEPTED);
         List<FollowInfoResponse> followInfoResponses = follows.stream()
                 .map(FollowInfoResponse::from)
