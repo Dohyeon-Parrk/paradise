@@ -59,7 +59,8 @@
 | API 명칭      | 메소드    | 요청 URL                 | 요청 본문                                              | 
 |-------------|--------|------------------------|----------------------------------------------------|
 | 로그인 사용자의 댓글 | `GET`  | /api/comments/{userId} |                                                    |                                                      |
-| 댓글 작성       | `POST` | /api/comment/create    | {"userId" : 1 , "postId" : 1 , "content" : "댓글내용"} |
+| 댓글 작성       | `POST` | /api/comments/create   | {"userId" : 1 , "postId" : 1 , "content" : "댓글내용"} |
+| 댓글 삭제|`DELETE`| /api/comments//{commentId}/users/{userId}||         
 
 <br><br>
 ## <span style="color: pink">  ERD 설계
