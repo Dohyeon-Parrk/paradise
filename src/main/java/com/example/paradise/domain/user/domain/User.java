@@ -68,10 +68,6 @@ public class User extends Timestamped {
         return authorities;
     }
 
-    public void changePassword(String encodedPassword) {
-        this.password = encodedPassword;
-    }
-
     public void deactiveAccount() {
         this.status = "DELETED";
     }

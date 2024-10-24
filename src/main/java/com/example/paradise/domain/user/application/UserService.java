@@ -5,10 +5,13 @@ import com.example.paradise.domain.profile.application.ProfileService;
 import com.example.paradise.domain.user.domain.User;
 import com.example.paradise.domain.user.domain.UserRoleEnum;
 import com.example.paradise.domain.user.domain.repository.UserRepository;
+import com.example.paradise.domain.user.dto.UserDeleteRequest;
+import com.example.paradise.domain.user.dto.UserPasswordUpdateRequest;
 import com.example.paradise.domain.user.dto.UserRegisterRequest;
 
 import com.example.paradise.domain.user.util.JwtTokenUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -76,23 +79,29 @@ public class UserService {
         return userRepository.findById(id);
     }
 
-    public User updatePassword(String email, String newPassword, String confirmPassword) {
-        User user = userRepository.findByEmail(email)
+    @Transactional
+    public User updatePassword(UserPasswordUpdateRequest request) {
+        User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
-        if (!newPassword.equals(confirmPassword)) {
+        if (!passwordEncoder.matches(request.getOldPassword(), user.getPassword())) {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
-        user.changePassword(passwordEncoder.encode(newPassword));
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
         return userRepository.save(user);
     }
 
-    public void deleteUser(Long id, String password) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
-        if (!passwordEncoder.matches(password, user.getPassword())) {
-            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+    @Transactional
+    public void deleteUser(UserDeleteRequest request) {
+        // 이메일로 사용자 조회
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+        // 비밀번호 검증
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+            throw new IllegalArgumentException("Invalid password");
         }
-        user.deactiveAccount(); // 계정을 비활성화 상태로 변경
-        userRepository.save(user);
+
+        // 사용자 삭제
+        userRepository.delete(user);
     }
 }

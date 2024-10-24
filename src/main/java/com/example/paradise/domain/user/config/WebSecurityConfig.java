@@ -7,6 +7,7 @@ import com.example.paradise.domain.user.util.JwtTokenUtil;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -60,7 +61,8 @@ public class WebSecurityConfig {
         http.authorizeHttpRequests((authorizeRequests) ->
                 authorizeRequests
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
-                        .requestMatchers("/api/users/**").permitAll()
+                        .requestMatchers("/api/users/login", "api/users/register").permitAll()
+                        .requestMatchers(HttpMethod.PUT, "/api/users/update").authenticated()
                         .anyRequest().authenticated());
 
         http.addFilterBefore(jwtAuthorizationFilter(), JwtAuthenticationFilter.class);

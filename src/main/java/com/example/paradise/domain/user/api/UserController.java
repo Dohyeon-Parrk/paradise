@@ -11,6 +11,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -54,14 +55,20 @@ public class UserController {
     }
 
     @PutMapping("/update")
-    public ResponseEntity<User> updatePassword(@RequestBody @Valid UserPasswordUpdateRequest request) {
-        User updatedUser = userService.updatePassword(request.getEmail(), request.getNewPassword(), request.getConfirmPassword());
-        return ResponseEntity.ok(updatedUser);
+    public ResponseEntity<String> updatePassword(@RequestBody UserPasswordUpdateRequest request) {
+        User updatedUser = userService.updatePassword(request);
+        return ResponseEntity.ok("비밀번호 변경 성공");
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteUser(@PathVariable long id, @RequestBody @Valid UserDeleteRequest request) {
-        userService.deleteUser(id, request.getPassword());
-        return ResponseEntity.ok("회원탈퇴 성공");
+    @DeleteMapping("/delete")
+    public ResponseEntity<?> deleteUser(@RequestBody UserDeleteRequest request) {
+        try {
+            userService.deleteUser(request);
+            return ResponseEntity.noContent().build();
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (UsernameNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
     }
 }
