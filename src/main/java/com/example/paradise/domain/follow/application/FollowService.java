@@ -1,7 +1,9 @@
 package com.example.paradise.domain.follow.application;
 
-import com.example.paradise.domain.follow.api.dto.FollowInfoResponse;
-import com.example.paradise.domain.follow.api.dto.FollowListResponse;
+import com.example.paradise.domain.follow.api.dto.FollowerInfoResponse;
+import com.example.paradise.domain.follow.api.dto.FollowerListResponse;
+import com.example.paradise.domain.follow.api.dto.FollowingInfoResponse;
+import com.example.paradise.domain.follow.api.dto.FollowingListResponse;
 import com.example.paradise.domain.follow.domain.Follow;
 import com.example.paradise.domain.follow.domain.FollowStatus;
 import com.example.paradise.domain.follow.domain.repository.FollowRepository;
@@ -51,40 +53,40 @@ public class FollowService {
     }
 
     @Transactional
-    public void acceptedFollow(Long receiverId, Long userId) {
-        findUserById(receiverId);
+    public void acceptedFollow(Long requesterId, Long userId) {
+        findUserById(requesterId);
         findUserById(userId);
 
-        Follow follow = followRepository.findByRequesterIdAndReceiverId(userId, receiverId)
+        Follow follow = followRepository.findByRequesterIdAndReceiverId(requesterId, userId)
                 .orElseThrow(() -> new IllegalArgumentException("팔로우를 서로 요청하지 않은 상태입니다."));
         follow.updateFollowStatus(FollowStatus.ACCEPTED);
         followRepository.save(follow);
     }
 
-    public boolean checkFollowing(Long receiverId, Long userId) {
-        Optional<Follow> follow = followRepository.findByRequesterIdAndReceiverId(userId, receiverId);
+    public boolean checkFollowing(Long requesterId, Long receiverId) {
+        Optional<Follow> follow = followRepository.findByRequesterIdAndReceiverId(requesterId, receiverId);
         if (follow.isEmpty() || follow.get().getStatus().equals(FollowStatus.PENDING)) {
             return false;
         }
         return follow.get().isFollowing();
     }
 
-    public FollowListResponse retrieveAllFollowers(Long userId) {
+    public FollowerListResponse retrieveAllFollowers(Long userId) {
         findUserById(userId);
         List<Follow> follows = followRepository.findAllByReceiverIdAndStatus(userId, FollowStatus.ACCEPTED);
-        List<FollowInfoResponse> followInfoResponses = follows.stream()
-                .map(FollowInfoResponse::from)
+        List<FollowerInfoResponse> followers = follows.stream()
+                .map(FollowerInfoResponse::from)
                 .toList();
-        return FollowListResponse.from(followInfoResponses);
+        return FollowerListResponse.from(followers);
     }
 
-    public FollowListResponse retrieveAllFollowings(Long userId) {
+    public FollowingListResponse retrieveAllFollowings(Long userId) {
         findUserById(userId);
         List<Follow> follows = followRepository.findAllByRequesterIdAndStatus(userId, FollowStatus.ACCEPTED);
-        List<FollowInfoResponse> followInfoResponses = follows.stream()
-                .map(FollowInfoResponse::from)
+        List<FollowingInfoResponse> followings = follows.stream()
+                .map(FollowingInfoResponse::from)
                 .toList();
-        return FollowListResponse.from(followInfoResponses);
+        return FollowingListResponse.from(followings);
     }
 
     public List<PostResponseDto> retrieveAllFollowingPosts(Long userId) {

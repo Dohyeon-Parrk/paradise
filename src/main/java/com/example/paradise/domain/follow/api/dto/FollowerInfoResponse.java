@@ -5,18 +5,18 @@ import com.example.paradise.domain.user.domain.User;
 import lombok.Builder;
 
 @Builder
-public record FollowInfoResponse(
-        Long id,
+public record FollowerInfoResponse(
+        Long userId,
         String follower,
         String profileImageUrl
 ) {
-    public static FollowInfoResponse from(Follow follow) {
-        User follower = follow.getReceiver();
+    public static FollowerInfoResponse from(Follow follow) {
+        User follower = follow.getRequester();
         String profileImageUrl = follower.getProfile().getProfileImage();
 
-        return FollowInfoResponse.builder()
-                .id(follow.getId())
-                .follower(follow.getReceiver().getUsername())
+        return FollowerInfoResponse.builder()
+                .userId(follow.getRequester().getId())
+                .follower(follow.getRequester().getUsername())
                 .profileImageUrl(profileImageUrl)
                 .build();
     }
