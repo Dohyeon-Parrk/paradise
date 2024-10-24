@@ -35,7 +35,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
         // 특정 URL 패턴 검사: /api/users/** 경로에 대해서는 필터링을 건너뜁니다.
         String path = req.getRequestURI();
-        if(path.startsWith("/api/users/")){
+        if (path.equals("/api/users/login") || path.equals("/api/users/register")) {
             filterChain.doFilter(req, res);
             return;
         }
