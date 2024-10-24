@@ -7,7 +7,7 @@ import lombok.Builder;
 @Builder
 public record FollowingInfoResponse(
         Long userId,
-        String follower,
+        String following,
         String profileImageUrl
 ) {
     public static FollowingInfoResponse from(Follow follow) {
@@ -16,7 +16,7 @@ public record FollowingInfoResponse(
 
         return FollowingInfoResponse.builder()
                 .userId(follow.getReceiver().getId())
-                .follower(follow.getReceiver().getUsername())
+                .following(follow.getReceiver().getUsername())
                 .profileImageUrl(profileImageUrl)
                 .build();
     }

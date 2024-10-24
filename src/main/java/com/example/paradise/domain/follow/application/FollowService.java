@@ -32,6 +32,9 @@ public class FollowService {
     public void follow(Long receiverId, Long userId) {
         User receiver = findUserById(receiverId);
         User user = findUserById(userId);
+        if (followRepository.existsByReceiverIdAndRequesterId(receiverId, userId)){
+            throw new IllegalArgumentException("이미 팔로우 요청이 존재합니다.");
+        };
 
         Follow follow = Follow.builder()
                 .receiver(receiver)
@@ -47,7 +50,7 @@ public class FollowService {
         findUserById(userId);
 
         Follow follow = followRepository.findByRequesterIdAndReceiverId(userId, receiverId)
-                .orElseThrow(() -> new IllegalArgumentException("팔로우를 서로 요청하지 않은 상태입니다."));
+                .orElseThrow(() -> new IllegalArgumentException("상대가 팔로우를 요청하지 않은 상태입니다."));
 
         followRepository.delete(follow);
     }
