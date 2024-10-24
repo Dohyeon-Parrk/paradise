@@ -4,6 +4,7 @@ import com.example.paradise.common.Timestamped;
 
 import com.example.paradise.domain.user.domain.User;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -11,6 +12,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @EntityListeners(AuditingEntityListener.class)
 @Getter
 @Entity
+@AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "post")
 public class Post extends Timestamped {
@@ -30,10 +32,11 @@ public class Post extends Timestamped {
 
     //게시글 - 유저
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id",nullable = false)
     private User author;
 
     public Post(User user, String content) {
+        this.author = user;
         this.username = user.getUsername();
         this.content = content;
     }
