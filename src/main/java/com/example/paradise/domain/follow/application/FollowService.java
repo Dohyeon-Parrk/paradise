@@ -48,11 +48,11 @@ public class FollowService {
     }
 
     @Transactional  // 팔로우 요청 거절 또는 언팔로우
-    public void unfollow(Long receiverId, Long userId) {
-        findUserById(receiverId);
+    public void unfollow(Long requesterId, Long userId) {
+        findUserById(requesterId);
         findUserById(userId);
 
-        Follow follow = followRepository.findByRequesterIdAndReceiverId(userId, receiverId)
+        Follow follow = followRepository.findByRequesterIdAndReceiverId(requesterId, userId)
                 .orElseThrow(() -> new IllegalArgumentException("상대가 팔로우를 요청하지 않은 상태입니다."));
 
         followRepository.delete(follow);
