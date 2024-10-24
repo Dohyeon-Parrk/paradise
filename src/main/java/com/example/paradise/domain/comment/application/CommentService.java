@@ -11,11 +11,13 @@ import com.example.paradise.domain.profile.domain.Profile;
 import com.example.paradise.domain.user.domain.User;
 import com.example.paradise.domain.user.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 @Service
@@ -36,29 +38,41 @@ public class CommentService {
         Profile profile = profileRepository.findByUser(user)
                 .orElseThrow(() -> new IllegalArgumentException("프로필을 찾을 수 없습니다."));
 
-        return commentRepository.findByUserId(userId).stream()
+        return commentRepository.findByAuthor_Id(userId).stream()
                 .map(CommentResponseDto::from)
                 .collect(Collectors.toList());
     }
 
     // 댓글 작성
     @Transactional
-    public CommentResponseDto createComment(CommentRequestDto commentRequestDto) {
-        User user = userRepository.findById(commentRequestDto.getUserId())
+    public CommentResponseDto createComment(Long postId, Long userId, CommentRequestDto commentRequestDto) {
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 유저를 찾을 수 없습니다."));
 
-        Post post = postRepository.findById(commentRequestDto.getPostId())
+        Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("포스팅된 글을 찾을 수 없습니다."));
 
-        Comment comment = Comment.builder()
-                .user(user)
-                .post(post)
-                .content(commentRequestDto.getContent())
-                .createdAt(LocalDateTime.now())
-                .build();
+        Comment comment = new Comment(user, post, commentRequestDto.getComments());
+        post.addComment(comment);
 
-        Comment savedComment = commentRepository.save(comment);
+        return new CommentResponseDto(comment.getId(), post.getContent(), comment.getComments(), comment.getCreatedAt());
+    }
 
-        return new CommentResponseDto(savedComment.getId(), user.getId(), user.getUsername(), savedComment.getContent(), savedComment.getCreatedAt());
+    // 댓글 삭제
+    public ResponseEntity<String> deleteComment(Long commentId, Long userId) {
+
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new NoSuchElementException("해당 댓글을 찾을 수 없습니다."));
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new NoSuchElementException("해당 유저를 찾을 수 없습니다."));
+
+        if(!comment.getAuthor().getId().equals(userId)){
+            throw new IllegalArgumentException("해당 댓글은 작성자만 삭제 할 수 있습니다. 삭제 권한이 업습니다.");
+        }
+
+        commentRepository.delete(comment);
+
+        return new ResponseEntity<>("삭제성공", HttpStatus.OK);
     }
 }

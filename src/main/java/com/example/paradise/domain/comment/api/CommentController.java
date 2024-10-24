@@ -27,10 +27,18 @@ public class CommentController {
     }
 
     // 댓글 생성
-    @PostMapping("/create")
-    public ResponseEntity<CommentResponseDto> createComment(@RequestBody CommentRequestDto commentRequestDto){
-        CommentResponseDto createdComment = commentService.createComment(commentRequestDto);
+    @PostMapping("/{postId}/users/{userId}/comments")
+    public ResponseEntity<CommentResponseDto> createComment(@PathVariable Long postId, @PathVariable Long userId,
+                                                            @RequestBody CommentRequestDto commentRequestDto){
+        CommentResponseDto createdComment = commentService.createComment(postId, userId, commentRequestDto);
 
         return new ResponseEntity<>(createdComment, HttpStatus.CREATED);
+    }
+
+    // 댓글 삭제
+    @DeleteMapping("/{commentId}/users/{userId}")
+    public ResponseEntity<String> deleteComment(@PathVariable Long commentId, @PathVariable Long userId){
+
+        return commentService.deleteComment(commentId, userId);
     }
 }
