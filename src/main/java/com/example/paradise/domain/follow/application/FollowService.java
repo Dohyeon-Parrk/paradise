@@ -1,20 +1,24 @@
 package com.example.paradise.domain.follow.application;
 
-import com.example.paradise.domain.follow.api.dto.FollowInfoResponse;
-import com.example.paradise.domain.follow.api.dto.FollowListResponse;
+import com.example.paradise.domain.follow.api.dto.FollowerInfoResponse;
+import com.example.paradise.domain.follow.api.dto.FollowerListResponse;
+import com.example.paradise.domain.follow.api.dto.FollowingInfoResponse;
+import com.example.paradise.domain.follow.api.dto.FollowingListResponse;
 import com.example.paradise.domain.follow.domain.Follow;
 import com.example.paradise.domain.follow.domain.FollowStatus;
 import com.example.paradise.domain.follow.domain.repository.FollowRepository;
 import com.example.paradise.domain.post.domain.Post;
+import com.example.paradise.domain.post.domain.PostRepository;
 import com.example.paradise.domain.post.dto.PostResponseDto;
 import com.example.paradise.domain.user.domain.User;
 import com.example.paradise.domain.user.domain.repository.UserRepository;
+import com.example.paradise.domain.user.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
@@ -22,14 +26,18 @@ import java.util.List;
 public class FollowService {
     private final FollowRepository followRepository;
     private final UserRepository userRepository;
+    private final PostRepository postRepository;
 
     @Transactional
     public void follow(Long receiverId, Long userId) {
-        User receiver = userRepository.findById(receiverId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 유저가 존재하지 않습니다." + receiverId));
-
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 유저가 존재하지 않습니다." + userId));
+        if (receiverId.equals(userId)) {
+            throw new IllegalArgumentException("자신한테 팔로우 요청을 보낼 수 없습니다.");
+        }
+        User receiver = findUserById(receiverId);
+        User user = findUserById(userId);
+        if (followRepository.existsByReceiverIdAndRequesterId(receiverId, userId)){
+            throw new IllegalArgumentException("이미 팔로우 요청이 존재합니다.");
+        };
 
         Follow follow = Follow.builder()
                 .receiver(receiver)
@@ -40,61 +48,74 @@ public class FollowService {
     }
 
     @Transactional  // 팔로우 요청 거절 또는 언팔로우
-    public void unfollow(Long requesterId, Long userId) {
-        User requester = userRepository.findById(requesterId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 유저가 존재하지 않습니다." + requesterId));
+    public void unfollow(Long receiverId, Long userId) {
+        findUserById(receiverId);
+        findUserById(userId);
 
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 유저가 존재하지 않습니다." + userId));
-
-        Follow follow = followRepository.findByRequesterIdAndReceiverId(requesterId, userId)
-                .orElseThrow(() -> new IllegalArgumentException("팔로우를 서로 요청하지 않은 상태입니다."));
+        Follow follow = followRepository.findByRequesterIdAndReceiverId(userId, receiverId)
+                .orElseThrow(() -> new IllegalArgumentException("상대가 팔로우를 요청하지 않은 상태입니다."));
 
         followRepository.delete(follow);
     }
 
     @Transactional
     public void acceptedFollow(Long requesterId, Long userId) {
+        findUserById(requesterId);
+        findUserById(userId);
+
         Follow follow = followRepository.findByRequesterIdAndReceiverId(requesterId, userId)
                 .orElseThrow(() -> new IllegalArgumentException("팔로우를 서로 요청하지 않은 상태입니다."));
         follow.updateFollowStatus(FollowStatus.ACCEPTED);
         followRepository.save(follow);
     }
 
-    public boolean checkFollowing(Long receiverId, Long userId) {
-        Follow follow = followRepository.findByRequesterIdAndReceiverId(receiverId, userId)
-                .orElseThrow(() -> new IllegalArgumentException("팔로우를 서로 요청하지 않은 상태입니다."));
-        return follow.isFollowing();
+    public boolean checkFollowing(Long requesterId, Long receiverId) {
+        Optional<Follow> follow = followRepository.findByRequesterIdAndReceiverId(requesterId, receiverId);
+        if (follow.isEmpty() || follow.get().getStatus().equals(FollowStatus.PENDING)) {
+            return false;
+        }
+        return follow.get().isFollowing();
     }
 
-    public FollowListResponse retrieveAllFollowers(Long userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 유저가 존재하지 않습니다." + userId));
-        List<Follow> follows = followRepository.findAllByRequesterIdAndStatus(userId, FollowStatus.ACCEPTED);
-        List<FollowInfoResponse> followInfoResponses = follows.stream()
-                .map(FollowInfoResponse::from)
+    public FollowerListResponse retrieveAllFollowers(Long userId) {
+        findUserById(userId);
+        List<Follow> follows = followRepository.findAllByReceiverIdAndStatus(userId, FollowStatus.ACCEPTED);
+        List<FollowerInfoResponse> followers = follows.stream()
+                .map(FollowerInfoResponse::from)
                 .toList();
-        return FollowListResponse.from(followInfoResponses);
+        return FollowerListResponse.from(followers);
+    }
+
+    public FollowingListResponse retrieveAllFollowings(Long userId) {
+        findUserById(userId);
+        List<Follow> follows = followRepository.findAllByRequesterIdAndStatus(userId, FollowStatus.ACCEPTED);
+        List<FollowingInfoResponse> followings = follows.stream()
+                .map(FollowingInfoResponse::from)
+                .toList();
+        return FollowingListResponse.from(followings);
     }
 
     public List<PostResponseDto> retrieveAllFollowingPosts(Long userId) {
-        User checkUser = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 유저가 존재하지 않습니다." + userId));
+        findUserById(userId);
         List<Follow> follows = followRepository.findAllByRequesterIdAndStatus(userId, FollowStatus.ACCEPTED);
-        // follow -> user가 팔로우하고 있는 사람들(receiver) -> posts들 가져오기 -> 나열은 생성일 순.
-        // 그리고 페이지네이션은 고민.
 
         List<User> followedUsers = follows.stream()
                 .map(Follow::getReceiver)
                 .toList();
 
-        List<Post> followedPosts = followedUsers.stream()
-                .flatMap(user -> user.getPosts().stream())
-                .sorted(Comparator.comparing(Post::getCreatedAt).reversed())
+        List<Long> followedUserIds = followedUsers.stream()
+                .map(User::getId)
                 .toList();
+
+        List<Post> followedPosts = postRepository.findPostsByUsers(followedUserIds);
 
         return followedPosts.stream()
                 .map(PostResponseDto::new)
                 .toList();
+    }
+
+    private User findUserById(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(userId));
     }
 }
