@@ -4,7 +4,6 @@ import com.example.paradise.domain.post.application.PostService;
 import com.example.paradise.domain.post.dto.CreatePostRequestDto;
 import com.example.paradise.domain.post.dto.PostResponseDto;
 import com.example.paradise.domain.post.dto.UpdatePostRequestDto;
-import com.example.paradise.domain.user.domain.User;
 import com.example.paradise.domain.user.domain.UserDetailsImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -31,11 +30,8 @@ public class PostController {
             @Valid @RequestBody CreatePostRequestDto requestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
-        // 사용자 정보 추출
-        User user = userDetails.getUser();
-
         // 게시글 생성 서비스 호출
-        PostResponseDto response = postService.createPost(requestDto, user);
+        PostResponseDto response = postService.createPost(requestDto, userDetails.getUser());
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
@@ -43,33 +39,33 @@ public class PostController {
 
     // 2. 게시글 조회 - 전체
     @GetMapping("")
-    public ResponseEntity<Page<PostResponseDto> > getAllPosts(
-        @RequestParam(defaultValue = "0") int page,
-        @RequestParam(defaultValue = "10") int size,
-        @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        Pageable pageable = PageRequest.of(page,size, Sort.by("updatedAt").descending());
-        Page<PostResponseDto> response = postService.getAllPosts(pageable,userDetails.getUser());
-        return  ResponseEntity.ok(response);
+    public ResponseEntity<Page<PostResponseDto>> getAllPosts(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("updatedAt").descending());
+        Page<PostResponseDto> response = postService.getAllPosts(pageable, userDetails.getUser());
+        return ResponseEntity.ok(response);
     }
 
     // 3. 게시글 조회 - 단건
     @GetMapping("/{postId}")
     public ResponseEntity<PostResponseDto> getPostById(@PathVariable Long postId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return ResponseEntity.ok(postService.getPostById(postId,userDetails.getUser()));
+        return ResponseEntity.ok(postService.getPostById(postId, userDetails.getUser()));
     }
 
 
     // 3. 게시글 수정
     @PutMapping("/{postId}")
-    public ResponseEntity<Void>updatePost(@PathVariable Long postId, @RequestBody UpdatePostRequestDto requestDto,@AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ResponseEntity<Void> updatePost(@PathVariable Long postId, @RequestBody UpdatePostRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         postService.updatePost(postId, requestDto, userDetails.getUser());
         return ResponseEntity.ok().build();
     }
 
     // 4. 게시글 삭제
     @DeleteMapping("/{postId}")
-    public ResponseEntity<Void> deletePost(@PathVariable Long postId) {
-        postService.deletePost(postId);
+    public ResponseEntity<Void> deletePost(@PathVariable Long postId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        postService.deletePost(postId, userDetails.getUser());
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
