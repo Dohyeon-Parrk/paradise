@@ -26,17 +26,17 @@ public class FollowController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @DeleteMapping("/{requesterId}")
-    public ResponseEntity<String> unFollow(@PathVariable Long requesterId,
+    @DeleteMapping("/{receiverId}")
+    public ResponseEntity<String> unFollow(@PathVariable Long receiverId,
                                            @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        followService.unfollow(requesterId, userDetails.getUser().getId());
+        followService.unfollow(receiverId, userDetails.getUser().getId());
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @PatchMapping("/{requesterId}")
-    public ResponseEntity<String> acceptedFollow(@PathVariable Long requesterId,
+    @PatchMapping("/{receiverId}")
+    public ResponseEntity<String> acceptedFollow(@PathVariable Long receiverId,
                                                  @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        followService.acceptedFollow(requesterId, userDetails.getUser().getId());
+        followService.acceptedFollow(receiverId, userDetails.getUser().getId());
         return new ResponseEntity<>(HttpStatus.OK);
 
     }

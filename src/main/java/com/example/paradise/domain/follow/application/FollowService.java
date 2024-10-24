@@ -15,7 +15,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,7 +29,6 @@ public class FollowService {
     @Transactional
     public void follow(Long receiverId, Long userId) {
         User receiver = findUserById(receiverId);
-
         User user = findUserById(userId);
 
         Follow follow = Follow.builder()
@@ -42,22 +40,22 @@ public class FollowService {
     }
 
     @Transactional  // 팔로우 요청 거절 또는 언팔로우
-    public void unfollow(Long followerId, Long userId) {
-        findUserById(followerId);
+    public void unfollow(Long receiverId, Long userId) {
+        findUserById(receiverId);
         findUserById(userId);
 
-        Follow follow = followRepository.findByRequesterIdAndReceiverId(userId, followerId)
+        Follow follow = followRepository.findByRequesterIdAndReceiverId(userId, receiverId)
                 .orElseThrow(() -> new IllegalArgumentException("팔로우를 서로 요청하지 않은 상태입니다."));
 
         followRepository.delete(follow);
     }
 
     @Transactional
-    public void acceptedFollow(Long otherId, Long userId) {
-        findUserById(otherId);
+    public void acceptedFollow(Long receiverId, Long userId) {
+        findUserById(receiverId);
         findUserById(userId);
 
-        Follow follow = followRepository.findByRequesterIdAndReceiverId(userId, otherId)
+        Follow follow = followRepository.findByRequesterIdAndReceiverId(userId, receiverId)
                 .orElseThrow(() -> new IllegalArgumentException("팔로우를 서로 요청하지 않은 상태입니다."));
         follow.updateFollowStatus(FollowStatus.ACCEPTED);
         followRepository.save(follow);
@@ -65,14 +63,11 @@ public class FollowService {
 
     public boolean checkFollowing(Long receiverId, Long userId) {
         Optional<Follow> follow = followRepository.findByRequesterIdAndReceiverId(userId, receiverId);
-
         if (follow.isEmpty() || follow.get().getStatus().equals(FollowStatus.PENDING)) {
             return false;
         }
-
         return follow.get().isFollowing();
     }
-
 
     public FollowListResponse retrieveAllFollowers(Long userId) {
         findUserById(userId);
@@ -86,8 +81,6 @@ public class FollowService {
     public List<PostResponseDto> retrieveAllFollowingPosts(Long userId) {
         findUserById(userId);
         List<Follow> follows = followRepository.findAllByRequesterIdAndStatus(userId, FollowStatus.ACCEPTED);
-        // follow -> user가 팔로우하고 있는 사람들(receiver) -> posts들 가져오기 -> 나열은 생성일 순.
-        // 그리고 페이지네이션은 고민.
 
         List<User> followedUsers = follows.stream()
                 .map(Follow::getReceiver)
