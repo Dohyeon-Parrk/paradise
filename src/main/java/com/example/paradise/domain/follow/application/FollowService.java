@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
@@ -52,18 +53,26 @@ public class FollowService {
     }
 
     @Transactional
-    public void acceptedFollow(Long requesterId, Long userId) {
-        Follow follow = followRepository.findByRequesterIdAndReceiverId(requesterId, userId)
+    public void acceptedFollow(Long otherId, Long userId) {
+        findUserById(otherId);
+        findUserById(userId);
+
+        Follow follow = followRepository.findByRequesterIdAndReceiverId(userId, otherId)
                 .orElseThrow(() -> new IllegalArgumentException("팔로우를 서로 요청하지 않은 상태입니다."));
         follow.updateFollowStatus(FollowStatus.ACCEPTED);
         followRepository.save(follow);
     }
 
     public boolean checkFollowing(Long receiverId, Long userId) {
-        Follow follow = followRepository.findByRequesterIdAndReceiverId(receiverId, userId)
-                .orElseThrow(() -> new IllegalArgumentException("팔로우를 서로 요청하지 않은 상태입니다."));
-        return follow.isFollowing();
+        Optional<Follow> follow = followRepository.findByRequesterIdAndReceiverId(userId, receiverId);
+
+        if (follow.isEmpty() || follow.get().getStatus().equals(FollowStatus.PENDING)) {
+            return false;
+        }
+
+        return follow.get().isFollowing();
     }
+
 
     public FollowListResponse retrieveAllFollowers(Long userId) {
         findUserById(userId);
