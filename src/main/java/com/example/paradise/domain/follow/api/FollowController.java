@@ -26,10 +26,10 @@ public class FollowController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @DeleteMapping("/{receiverId}")
-    public ResponseEntity<String> unFollow(@PathVariable Long receiverId,
+    @DeleteMapping("/{requesterId}")
+    public ResponseEntity<String> unFollow(@PathVariable Long requesterId,
                                            @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        followService.unfollow(receiverId, userDetails.getUser().getId());
+        followService.unfollow(requesterId, userDetails.getUser().getId());
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
